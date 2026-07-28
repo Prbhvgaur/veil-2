@@ -180,10 +180,11 @@ body[data-role="admin"] .sa-only{display:none !important}
 .toast.out{animation:tout .3s forwards}
 @keyframes tin{from{opacity:0;transform:translateY(40px)}to{opacity:1}}
 @keyframes tout{to{opacity:0;transform:translateY(20px)}}
+@keyframes shakepw{20%{transform:translateX(-8px)}40%{transform:translateX(7px)}60%{transform:translateX(-5px)}80%{transform:translateX(4px)}}
 .pill-count{font-family:var(--font-mono);font-size:10px;color:var(--glow)}
 </style>
 </head>
-<body data-role="super">
+<body data-role="admin">
 <div class="fog a"></div><div class="fog b"></div><div class="grain"></div>
 <aside class="rail" aria-label="Admin navigation">
   <div class="rail-head">
@@ -206,11 +207,11 @@ body[data-role="admin"] .sa-only{display:none !important}
   <div class="role-card">
     <div class="who">
       <span class="av">SR</span>
-      <div><b>Saurabh Rakheja</b><span class="r" id="roleLabel">Super Admin</span></div>
+      <div><b>Saurabh Rakheja</b><span class="r" id="roleLabel">Admin</span></div>
     </div>
     <div class="role-switch" role="radiogroup" aria-label="Viewing role">
-      <button data-role="admin">Admin</button>
-      <button data-role="super" class="on">Super</button>
+      <button data-role="admin" class="on">Admin</button>
+      <button data-role="super" id="superBtn"><svg id="superLock" viewBox="0 0 24 24" style="width:10px;height:10px;stroke:currentColor;fill:none;stroke-width:2.4;margin-right:4px;vertical-align:-1px"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg>Super</button>
     </div>
   </div>
 </aside>
@@ -379,6 +380,40 @@ body[data-role="admin"] .sa-only{display:none !important}
 </main>
 <!-- __BODY_DONE__ -->
 <div class="toast-zone" id="toastZone" aria-live="polite"></div>
+<div class="overlay" id="saOverlay" role="dialog" aria-modal="true" aria-labelledby="saTitle">
+  <div class="dialog" style="width:min(520px,94vw);text-align:left">
+    <div style="text-align:center;margin-bottom:16px">
+      <span class="plaque">The sealed sanctum</span>
+      <h3 id="saTitle" style="margin-top:10px">Super Admin requires the seal</h3>
+    </div>
+    <div id="saPwRow">
+      <label class="note" for="saPw" style="display:block;margin-bottom:7px">Speak the passphrase</label>
+      <input id="saPw" type="password" autocomplete="off" spellcheck="false"
+        style="width:100%;background:var(--surface);border:1px solid var(--border-strong);border-radius:10px;color:var(--text);padding:12px 14px;font-family:var(--font-mono);font-size:15px;letter-spacing:.2em;text-align:center"
+        placeholder="••••••••">
+      <p class="note" id="saPwErr" style="color:var(--err);display:none;margin-top:7px">The seal rejects it. The attempt has been inscribed.</p>
+      <div style="margin:12px 0 18px;padding:11px 14px;border:1px dashed var(--warn);border-radius:10px;background:color-mix(in srgb,var(--warn) 7%,transparent)">
+        <p class="note" style="color:var(--warn)">Demo mode — backend not connected</p>
+        <p style="font-size:12.5px;color:var(--dim);margin-top:3px">Passphrase: <b style="font-family:var(--font-mono);color:var(--text);letter-spacing:.14em">VEIL-777</b> · shown only until real authentication replaces this gate.</p>
+      </div>
+    </div>
+    <div style="border-top:1px solid var(--border);padding-top:14px;margin-bottom:18px">
+      <p class="note" style="margin-bottom:9px;color:var(--glow)">Why the sanctum is sealed</p>
+      <ul style="list-style:none;display:flex;flex-direction:column;gap:8px;font-size:12.5px;color:var(--dim)">
+        <li><b style="color:var(--text)">Irreversible destruction</b> — only the super admin can permanently delete accounts and dissolve communities. There is no undo; a stolen session means unrecoverable loss.</li>
+        <li><b style="color:var(--text)">Borrowed faces</b> — impersonation grants sight into a real user's private chamber. The gravest privacy power on the platform, so its approval sits behind the strongest seal.</li>
+        <li><b style="color:var(--text)">Instruments of law</b> — legal requests carry confidential case material and legal deadlines; exposure would breach both user trust and statute.</li>
+        <li><b style="color:var(--text)">The archives</b> — data exports move user information in bulk. One misused export is a platform-ending breach, so release is a super-admin-only rite.</li>
+        <li><b style="color:var(--text)">Governance of the wardens</b> — promoting, demoting, and dismissing moderators shapes who holds power everywhere else.</li>
+        <li><b style="color:var(--text)">Everything is inscribed</b> — every elevation, failed passphrase, and super-admin rite is written to the audit log. In production this gate becomes 2FA + hardware key, sessions expire in 15 minutes, and access is IP-allowlisted.</li>
+      </ul>
+    </div>
+    <div class="acts">
+      <button class="abtn" id="saCancel" style="padding:9px 20px">Stay as Admin</button>
+      <button class="abtn primary" id="saUnlock" style="padding:9px 22px">Break the seal</button>
+    </div>
+  </div>
+</div>
 <div class="overlay" id="confirmOverlay" role="dialog" aria-modal="true">
   <div class="dialog">
     <h3 class="red" id="cfTitle">Confirm</h3>
@@ -514,14 +549,52 @@ $$('.ritem').forEach(b=>b.addEventListener('click',()=>{
   $('#paneTitle').innerHTML=TITLES[pane];
   if(pane==='dashboard')drawCharts();
 }));
-$$('.role-switch button').forEach(b=>b.addEventListener('click',()=>{
-  $$('.role-switch button').forEach(x=>x.classList.remove('on'));b.classList.add('on');
-  document.body.dataset.role=b.dataset.role;
-  $('#roleLabel').textContent=b.dataset.role==='super'?'Super Admin':'Admin';
-  if(b.dataset.role==='admin'&&['impersonation','legal','export'].includes(pane)){$$('.ritem')[0].click()}
+/* super admin is sealed behind a passphrase (demo: shown in dialog until backend auth exists) */
+const SA_PASS='VEIL-777';
+let saUnlocked=sessionStorage.getItem('veil.saUnlocked')==='1';
+function applyRole(role){
+  $$('.role-switch button').forEach(x=>x.classList.toggle('on',x.dataset.role===role));
+  document.body.dataset.role=role;
+  $('#roleLabel').textContent=role==='super'?'Super Admin':'Admin';
+  if(role==='admin'&&['impersonation','legal','export'].includes(pane)){$$('.ritem')[0].click()}
   renderUsers();renderMods();renderComms();
-  toast('Now viewing as '+(b.dataset.role==='super'?'Super Admin':'Admin'));
+}
+$$('.role-switch button').forEach(b=>b.addEventListener('click',()=>{
+  const role=b.dataset.role;
+  if(role==='super'){
+    if(saUnlocked){applyRole('super');toast('Now viewing as Super Admin');return}
+    $('#saPw').value='';$('#saPwErr').style.display='none';
+    $('#saOverlay').classList.add('open');
+    setTimeout(()=>$('#saPw').focus(),120);
+    return;
+  }
+  const wasSuper=document.body.dataset.role==='super';
+  applyRole('admin');
+  if(wasSuper&&saUnlocked){
+    saUnlocked=false;sessionStorage.removeItem('veil.saUnlocked');
+    inscribe('Super admin sanctum re-sealed','sanctum');
+    toast('The sanctum is sealed again');
+  }else toast('Now viewing as Admin');
 }));
+function tryUnlock(){
+  if($('#saPw').value===SA_PASS){
+    saUnlocked=true;sessionStorage.setItem('veil.saUnlocked','1');
+    $('#saOverlay').classList.remove('open');
+    applyRole('super');
+    inscribe('Super admin seal broken — session elevated','sanctum');
+    toast('The seal breaks. Tread carefully, Super Admin.');
+  }else{
+    $('#saPwErr').style.display='block';
+    const inp=$('#saPw');inp.style.animation='none';void inp.offsetWidth;inp.style.animation='shakepw .4s';
+    inscribe('FAILED super admin passphrase attempt','sanctum');
+    toast('The seal rejects the passphrase','error');
+  }
+}
+$('#saUnlock').addEventListener('click',tryUnlock);
+$('#saPw').addEventListener('keydown',e=>{if(e.key==='Enter')tryUnlock()});
+$('#saCancel').addEventListener('click',()=>$('#saOverlay').classList.remove('open'));
+$('#saOverlay').addEventListener('click',e=>{if(e.target.id==='saOverlay')e.target.classList.remove('open')});
+if(saUnlocked)applyRole('super');
 
 /* ═══ ANALYTICS ═══ */
 const MAU=[71,76,84,80,92,98,104,101,112,119,124,128];
