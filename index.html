@@ -54,11 +54,11 @@ html[data-accent]{--purple:var(--acc);--glow:var(--acc-glow);
   --fog-b:color-mix(in srgb,var(--acc) 13%,transparent);}
 
 *{margin:0;padding:0;box-sizing:border-box}
-html{scroll-behavior:smooth}
+html{scroll-behavior:smooth;background:var(--bg)}
 body{
   background:var(--bg); color:var(--text);
   font-family:var(--font-body); font-size:var(--text-base); line-height:1.6;
-  transition:background .3s var(--ease), color .3s var(--ease);
+  transition:color .3s var(--ease);
   overflow-x:hidden; min-height:100dvh;
 }
 html[data-fontsize="small"] body{font-size:13px}
@@ -2667,6 +2667,13 @@ function applyTheme(t){
   const real=t==='system'?(matchMedia('(prefers-color-scheme: light)').matches?'light':'dark'):t;
   rootEl.dataset.theme=real;store.set('theme',t);
   $$('[data-seg="theme"] button').forEach(b=>{const on=b.dataset.val===t;b.classList.toggle('on',on);b.setAttribute('aria-checked',on)});
+  /* iOS Safari: pin the resolved bg as an inline solid so the viewport
+     canvas layer repaints — a stale composited layer otherwise leaves
+     half the page in the previous theme's color */
+  requestAnimationFrame(()=>{
+    rootEl.style.backgroundColor=getComputedStyle(rootEl).getPropertyValue('--bg').trim();
+    document.body.style.backgroundColor=rootEl.style.backgroundColor;
+  });
 }
 $$('[data-theme-toggle]').forEach(b=>b.addEventListener('click',()=>{
   applyTheme(rootEl.dataset.theme==='dark'?'light':'dark');
