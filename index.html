@@ -755,6 +755,61 @@ html[data-theme="light"] .vcard:hover{box-shadow:0 0 0 1px var(--glow),0 0 24px 
 .leader .lname span{font-family:var(--font-mono);font-size:var(--text-xs);color:var(--dim)}
 .leader .lcount{font-family:var(--font-mono);font-size:var(--text-xs);color:var(--dim);letter-spacing:.1em}
 
+/* ═══════════ KINDRED DECK (swipe) ═══════════ */
+.deck-zone{max-width:540px;margin:0 auto 54px}
+.deck-zone .plaque{margin-bottom:16px}
+.deck{position:relative;height:440px;perspective:1100px}
+.deck-card{position:absolute;inset:0;border-radius:var(--r-lg);overflow:hidden;border:1px solid var(--border-strong);
+  background:var(--card);box-shadow:0 26px 60px rgba(0,0,0,.45),0 0 40px var(--glow-soft);cursor:grab;
+  touch-action:pan-y;user-select:-webkit-user-select;user-select:none;
+  transition:transform .45s var(--spring),opacity .35s}
+.deck-card.dragging{transition:none;cursor:grabbing}
+.deck-card .dcover{height:150px}
+.deck-card>.avatar{width:96px;height:96px;font-size:34px;position:absolute;left:50%;top:100px;
+  transform:translateX(-50%);border:3px solid var(--card);z-index:2;cursor:default}
+.deck-card .dbody{padding:56px 26px 16px;text-align:center}
+.deck-card h3{font-family:var(--font-display);font-style:italic;font-size:26px;font-weight:400}
+.deck-card .vh{margin:2px 0 10px}
+.deck-card .vbio{min-height:0;font-size:var(--text-sm)}
+.deck-card .varch{margin-top:14px}
+.deck-card .stamp{position:absolute;top:26px;font-family:var(--font-condensed);font-size:38px;letter-spacing:.12em;
+  padding:2px 18px;border:3px solid;border-radius:10px;opacity:0;pointer-events:none;z-index:5;background:rgba(0,0,0,.35)}
+.deck-card .stamp.pass{left:18px;color:#C9C2D6;border-color:#C9C2D6;transform:rotate(-13deg)}
+.deck-card .stamp.meet{right:18px;color:var(--ok);border-color:var(--ok);transform:rotate(13deg)}
+.deck-actions{display:flex;gap:20px;justify-content:center;margin-top:20px}
+.deck-btn{width:60px;height:60px;border-radius:50%;border:1px solid var(--border-strong);background:var(--card);
+  display:flex;align-items:center;justify-content:center;transition:transform .2s var(--spring),box-shadow .25s,border-color .2s}
+.deck-btn svg{width:24px;height:24px;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;fill:none}
+.deck-btn.pass svg{stroke:var(--dim)}
+.deck-btn.meet{border-color:var(--glow);background:linear-gradient(140deg,var(--purple),color-mix(in srgb,var(--purple) 60%,#241238));box-shadow:0 0 20px var(--glow-soft)}
+.deck-btn.meet svg{stroke:#fff}
+.deck-btn:hover{transform:scale(1.1);box-shadow:0 0 22px var(--glow-soft)}
+.deck-btn:active{transform:scale(.94)}
+.deck-empty{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;
+  gap:16px;text-align:center;border:1px dashed var(--border-strong);border-radius:var(--r-lg)}
+.deck-empty[hidden]{display:none !important}
+.deck-empty p{font-family:var(--font-display);font-style:italic;font-size:19px;color:var(--dim);max-width:280px}
+
+/* ═══════════ BIGGER VEIL CARDS + COVER ═══════════ */
+.vcard{padding:0;overflow:hidden;text-align:center}
+.vcard .vcover{height:92px}
+.vcard .avatar{width:76px;height:76px;font-size:26px;margin:-38px auto 12px;border:3px solid var(--card);
+  position:relative;z-index:2}
+.vcard .vinner{padding:0 22px 26px}
+.vcard h3{font-size:var(--text-lg)}
+.vcard .vbio{min-height:40px;font-size:var(--text-sm)}
+
+/* avatar peek (expand) overlay */
+.peek-card{width:min(440px,94vw);padding:0;overflow:hidden;text-align:center}
+.peek-cover{height:150px}
+.peek-av{width:150px;height:150px;border-radius:50%;margin:-75px auto 14px;border:4px solid var(--card);
+  display:flex;align-items:center;justify-content:center;font-family:var(--font-display);font-style:italic;
+  font-size:52px;color:#fff;box-shadow:0 0 46px var(--glow-mid);position:relative;z-index:2;overflow:hidden;
+  animation:peekIn .5s var(--spring)}
+.peek-av img{width:100%;height:100%;object-fit:cover}
+@keyframes peekIn{from{transform:scale(.35);opacity:0}to{transform:none;opacity:1}}
+.peek-body{padding:0 26px 30px}
+
 /* ═══════════ STATIC PAGES ═══════════ */
 .page-wrap{max-width:760px;margin:0 auto;padding:44px 24px 130px}
 .page-wrap .page-head{text-align:center;margin-bottom:44px}
@@ -1213,7 +1268,7 @@ html[data-theme="light"] .tsw-thumb::after{opacity:0}
     </span><span class="rail-label">Theme</span>
   </button>
   <button class="rail-user" id="railUser" aria-label="Open my profile">
-    <span class="avatar" aria-hidden="true"><span id="railInitials">SR</span></span>
+    <span class="avatar" aria-hidden="true"><span id="railInitials">SR</span><img id="railImg" alt="" hidden></span>
     <span class="rail-uinfo"><b id="railName">Saurabh Rakheja</b><span id="railHandle">veil.app/saurabh</span></span>
   </button>
 </aside>
@@ -2107,7 +2162,7 @@ html[data-theme="light"] .tsw-thumb::after{opacity:0}
   <div class="inbox-wrap">
     <div class="inbox-plaque-row"><span class="plaque">Your chamber</span></div>
     <header class="inbox-head">
-      <div class="avatar" aria-hidden="true"><span id="inboxInitials">SR</span></div>
+      <div class="avatar" aria-hidden="true"><span id="inboxInitials">SR</span><img id="inboxImg" alt="" hidden></div>
       <div class="who">
         <h2 id="inboxName">Saurabh Rakheja</h2>
         <p class="h">veil.app/<span id="inboxHandle">saurabh</span></p>
@@ -2233,6 +2288,19 @@ html[data-theme="light"] .tsw-thumb::after{opacity:0}
       <button class="chip" data-arch="observer">Observers</button>
       <button class="chip" data-arch="trickster">Tricksters</button>
       <button class="chip" data-arch="guardian">Guardians</button>
+    </div>
+    <div class="deck-zone">
+      <div style="text-align:center"><span class="plaque">Matched to your vibe · swipe to sort fate</span></div>
+      <div class="deck" id="deckStack">
+        <div class="deck-empty" id="deckEmpty" hidden>
+          <p>The fog holds no more kindred today.</p>
+          <button class="btn ghost" id="deckReset" style="padding:11px 22px;min-height:42px"><span class="btn-label">Shuffle the deck again</span></button>
+        </div>
+      </div>
+      <div class="deck-actions">
+        <button class="deck-btn pass" id="deckPass" aria-label="Pass"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
+        <button class="deck-btn meet" id="deckMeet" aria-label="Meet this veil"><svg viewBox="0 0 24 24"><path d="M19.5 12.6 12 20l-7.5-7.4a5 5 0 1 1 7.5-6.6 5 5 0 1 1 7.5 6.6Z"/></svg></button>
+      </div>
     </div>
     <div class="veil-grid" id="veilGrid"></div>
     <div class="sec-head reveal" style="margin-bottom:26px">
@@ -2446,6 +2514,20 @@ html[data-theme="light"] .tsw-thumb::after{opacity:0}
   </div>
 </div>
 
+<div class="overlay" id="peekOverlay" role="dialog" aria-modal="true" aria-label="Profile picture">
+  <div class="dialog ornate peek-card">
+    <div class="peek-cover" id="peekCover"></div>
+    <div class="peek-av" id="peekAv"></div>
+    <div class="peek-body">
+      <h3 id="peekName" style="font-family:var(--font-display);font-style:italic;font-size:26px">—</h3>
+      <p class="vh" id="peekHandle" style="font-family:var(--font-mono);font-size:var(--text-xs);color:var(--glow);letter-spacing:.08em;margin:4px 0 16px"></p>
+      <div class="dlg-actions">
+        <button class="btn ghost" id="peekClose"><span class="btn-label">Close</span></button>
+        <button class="btn primary" id="peekVisit"><span class="spinner" aria-hidden="true"></span><span class="btn-label">Visit veil</span></button>
+      </div>
+    </div>
+  </div>
+</div>
 <div class="toast-zone" id="toastZone" aria-live="polite"></div>
 <script>
 "use strict";
@@ -2840,15 +2922,31 @@ $$('.unblock').forEach(b=>b.addEventListener('click',()=>{
 }));
 /* avatar */
 $('#avatarBtn').addEventListener('click',()=>$('#avatarFile').click());
+function setAvatarAll(src){
+  ['avatarImg','pfAvatarImg','edImg','railImg','inboxImg'].forEach(id=>{
+    const el=$('#'+id);if(el){el.src=src;el.hidden=false}
+  });
+}
 $('#avatarFile').addEventListener('change',e=>{
   const f=e.target.files[0];if(!f)return;
   const r=new FileReader();
-  r.onload=()=>{const img=$('#avatarImg');img.src=r.result;img.hidden=false;
-    const p=$('#pfAvatarImg');p.src=r.result;if(!profileUser&&current==='profile')p.hidden=false;
-    const d=$('#edImg');d.src=r.result;d.hidden=false;
-    toast('New face for the mask')};
+  r.onload=()=>{
+    const im=new Image();
+    im.onload=()=>{
+      const c=document.createElement('canvas');c.width=c.height=256;
+      const s=Math.min(im.width,im.height);
+      c.getContext('2d').drawImage(im,(im.width-s)/2,(im.height-s)/2,s,s,0,0,256,256);
+      const data=c.toDataURL('image/jpeg',.85);
+      setAvatarAll(data);
+      try{store.set('avatar',data)}catch(err){toast('Face kept for this visit only (image too large to persist)','error')}
+      toast('New face for the mask');
+    };
+    im.src=r.result;
+  };
   r.readAsDataURL(f);
 });
+const savedAvatar=store.get('avatar',null);
+if(savedAvatar)setAvatarAll(savedAvatar);
 /* bio counter */
 const bio=$('#p-bio'),bioCount=$('#bioCount');
 function syncBio(){bioCount.textContent=bio.value.length;bioCount.parentElement.classList.toggle('max',bio.value.length>=120)}
@@ -3189,10 +3287,13 @@ function renderVeils(){
     (!q||u.handle.toLowerCase().includes(q)||u.name.toLowerCase().includes(q)||u.bio.toLowerCase().includes(q)));
   $('#veilGrid').innerHTML=list.map((u,i)=>`
     <article class="vcard" data-h="${u.handle}" role="button" tabindex="0" aria-label="Visit ${u.handle}">
-      <div class="avatar" style="background:${avatarBg(u.hue)}" aria-hidden="true">${initials(u.name)}</div>
-      <h3>${u.name}</h3><p class="vh">veil.app/${u.handle}</p>
-      <p class="vbio">${u.bio}</p>
-      <span class="varch">${archName(u.arch)}</span>
+      <div class="vcover" style="background:linear-gradient(140deg,hsl(${u.hue} 50% 30%),hsl(${(u.hue+60)%360} 45% 13%))"></div>
+      <button class="avatar" style="background:${avatarBg(u.hue)}" data-peek="${u.handle}" aria-label="Expand ${u.name}'s picture">${initials(u.name)}</button>
+      <div class="vinner">
+        <h3>${u.name}</h3><p class="vh">veil.app/${u.handle}</p>
+        <p class="vbio">${u.bio}</p>
+        <span class="varch">${archName(u.arch)}</span>
+      </div>
     </article>`).join('')||'<p style="grid-column:1/-1;text-align:center;color:var(--dim)">The fog holds no one by that name.</p>';
 }
 function renderLeader(){
@@ -3210,8 +3311,23 @@ $$('#discChips .chip').forEach(c=>c.addEventListener('click',()=>{
   $$('#discChips .chip').forEach(x=>x.classList.remove('on'));c.classList.add('on');renderVeils();
 }));
 document.addEventListener('click',e=>{
+  const pk=e.target.closest('[data-peek]');
+  if(pk){e.stopPropagation();openPeek(USERS.find(u=>u.handle===pk.dataset.peek));return}
   const v=e.target.closest('.vcard');if(v)openProfile(USERS.find(u=>u.handle===v.dataset.h));
 });
+let peekUser=null;
+function openPeek(u){
+  if(!u)return;peekUser=u;
+  $('#peekCover').style.background=`linear-gradient(140deg,hsl(${u.hue} 52% 32%),hsl(${(u.hue+60)%360} 46% 12%))`;
+  const av=$('#peekAv');av.style.background=avatarBg(u.hue);av.textContent=initials(u.name);
+  $('#peekName').textContent=u.name;
+  $('#peekHandle').textContent='veil.app/'+u.handle;
+  $('#peekOverlay').classList.add('open');
+}
+$('#peekClose').addEventListener('click',()=>$('#peekOverlay').classList.remove('open'));
+$('#peekVisit').addEventListener('click',e=>withLoading(e.currentTarget,400,()=>{
+  $('#peekOverlay').classList.remove('open');openProfile(peekUser);
+}));
 document.addEventListener('keydown',e=>{
   if(e.key==='Enter'&&e.target.classList&&e.target.classList.contains('vcard'))
     openProfile(USERS.find(u=>u.handle===e.target.dataset.h));
@@ -3548,6 +3664,82 @@ addEventListener('load',function(){
     renderer.render(scene,cam);
   });
 });
+
+/* ═══════════ KINDRED DECK — swipe your vibe ═══════════ */
+let deckPool=[],deckIdx=0;
+function buildDeck(){
+  const my=store.get('archetype',null);
+  deckPool=[...USERS].sort((a,b)=>((b.arch===my)-(a.arch===my))||((hashStr(a.handle)%13)-(hashStr(b.handle)%13)));
+  deckIdx=0;renderDeck();
+}
+function renderDeck(){
+  const zone=$('#deckStack');
+  zone.querySelectorAll('.deck-card').forEach(c=>c.remove());
+  const rest=deckPool.slice(deckIdx,deckIdx+3);
+  $('#deckEmpty').hidden=rest.length>0;
+  rest.forEach((u,i)=>{
+    const e=epithetFor(u);
+    const el=document.createElement('article');
+    el.className='deck-card';el.dataset.h=u.handle;
+    el.style.zIndex=String(20-i);
+    el.style.transform=`translateY(${i*14}px) scale(${1-i*.05})`;
+    if(i)el.style.pointerEvents='none';
+    el.innerHTML=`
+      <span class="stamp pass">Pass</span><span class="stamp meet">Meet</span>
+      <div class="dcover" style="background:linear-gradient(140deg,hsl(${u.hue} 52% 30%),hsl(${(u.hue+60)%360} 46% 13%))"></div>
+      <button class="avatar" data-peek="${u.handle}" style="background:${avatarBg(u.hue)}" aria-label="Expand ${u.name}'s picture">${initials(u.name)}</button>
+      <div class="dbody">
+        <h3>${u.name}</h3>
+        <p class="vh" style="font-family:var(--font-mono);font-size:var(--text-xs);color:var(--glow);letter-spacing:.08em">veil.app/${u.handle}</p>
+        <p class="vbio" style="color:var(--dim)">${u.bio}</p>
+        <span class="varch">${e.title}</span>
+      </div>`;
+    zone.appendChild(el);
+    if(i===0)bindDeckDrag(el);
+  });
+}
+function flyOut(el,dir,cb){
+  el.style.transition='transform .45s cubic-bezier(.5,0,.75,.4),opacity .4s';
+  el.style.transform=`translateX(${dir*580}px) rotate(${dir*24}deg)`;
+  el.style.opacity='0';
+  setTimeout(cb,300);
+}
+function deckResolve(dir){
+  const u=deckPool[deckIdx];
+  const top=$('#deckStack .deck-card');
+  if(!u||!top)return;
+  flyOut(top,dir,()=>{
+    deckIdx++;
+    if(dir>0){toast('A kindred veil — go whisper bravely');openProfile(USERS.find(x=>x.handle===u.handle))}
+    renderDeck();
+  });
+}
+function bindDeckDrag(el){
+  let sx=0,dx=0,drag=false;
+  el.addEventListener('pointerdown',e=>{
+    if(e.target.closest('[data-peek]'))return;
+    drag=true;sx=e.clientX;el.classList.add('dragging');
+    try{el.setPointerCapture(e.pointerId)}catch(err){}
+  });
+  el.addEventListener('pointermove',e=>{
+    if(!drag)return;dx=e.clientX-sx;
+    el.style.transform=`translateX(${dx}px) rotate(${(dx*.055).toFixed(2)}deg)`;
+    el.querySelector('.stamp.meet').style.opacity=Math.min(1,Math.max(0,dx/90));
+    el.querySelector('.stamp.pass').style.opacity=Math.min(1,Math.max(0,-dx/90));
+  });
+  const end=()=>{
+    if(!drag)return;drag=false;el.classList.remove('dragging');
+    if(Math.abs(dx)>110)deckResolve(dx>0?1:-1);
+    else{el.style.transform='';el.querySelectorAll('.stamp').forEach(s=>s.style.opacity=0)}
+    dx=0;
+  };
+  el.addEventListener('pointerup',end);
+  el.addEventListener('pointercancel',end);
+}
+$('#deckPass').addEventListener('click',()=>deckResolve(-1));
+$('#deckMeet').addEventListener('click',()=>deckResolve(1));
+$('#deckReset').addEventListener('click',buildDeck);
+buildDeck();
 </script>
 </body>
 </html>

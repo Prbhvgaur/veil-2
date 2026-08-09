@@ -556,6 +556,29 @@ select.tsel:focus{outline:none;border-color:var(--glow)}
   </div>
 </div>
 
+<div class="overlay" id="regModOverlay" role="dialog" aria-modal="true" aria-labelledby="rmTitle">
+  <div class="dialog" style="width:min(500px,94vw);text-align:left">
+    <div style="text-align:center;margin-bottom:16px"><span class="plaque">The initiation rite</span>
+      <h3 id="rmTitle" style="margin-top:10px">Register a moderator</h3></div>
+    <div class="lfield"><label for="rmName">Full name</label><input id="rmName" autocomplete="off" placeholder="e.g. Aditi Rao"></div>
+    <div class="lfield"><label for="rmEmail">Email</label><input id="rmEmail" autocomplete="off" placeholder="warden@veil.app"></div>
+    <div style="display:flex;gap:12px">
+      <div class="lfield" style="flex:1"><label for="rmRegion">Region</label>
+        <select class="tsel" id="rmRegion" style="width:100%"><option>APAC</option><option>EMEA</option><option>AMER</option></select></div>
+      <div class="lfield" style="flex:1"><label for="rmRank">Rank</label>
+        <select class="tsel" id="rmRank" style="width:100%"><option value="false">Warden</option><option value="true">Senior warden</option></select></div>
+    </div>
+    <p class="note" id="rmErr" style="color:var(--err);display:none">Name and a valid email are required.</p>
+    <div style="margin:12px 0 4px;padding:11px 14px;border:1px dashed var(--warn);border-radius:10px;background:color-mix(in srgb,var(--warn) 6%,transparent)">
+      <p class="note" style="color:var(--warn)">Demo mode</p>
+      <p style="font-size:12.5px;color:var(--dim);margin-top:3px">An invite &amp; temporary login key would be emailed. The warden joins as <b style="color:var(--text)">Pending</b> until they accept.</p>
+    </div>
+    <div class="acts" style="margin-top:16px">
+      <button class="abtn" id="rmCancel" style="padding:9px 20px">Cancel</button>
+      <button class="abtn primary" id="rmGo" style="padding:9px 22px">Send invitation</button>
+    </div>
+  </div>
+</div>
 <div class="overlay" id="confirmOverlay" role="dialog" aria-modal="true">
   <div class="dialog">
     <h3 class="red" id="cfTitle">Confirm</h3>
@@ -798,6 +821,9 @@ function openUserProfile(u){
   const made=S.reports.filter(r=>r.by===u.handle);
   const got=S.reports.filter(r=>r.against===u.handle);
   const flags=u.flagged?['Automated ward: repeated harsh-language hits','Manual flag by warden — pattern of targeted whispers']:[];
+  const ROLES=['member','member','member','moderator','founder'];
+  const commJoin=S.comms.slice(0,2+h%3).map((c,i)=>({c,role:ROLES[(h+i)%ROLES.length],when:WHEN[i%WHEN.length]}));
+  const modHist=S.audit.filter(a=>a.target==='@'+u.handle);
   const row=(inner,when)=>`<li>${inner}<span class="mono">${when}</span></li>`;
   const person=o=>`<span class="uav" style="width:24px;height:24px;font-size:8.5px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-family:var(--font-mono);color:#fff;background:${hueBg(o.hue)}">${ini(o.name)}</span><b style="font-size:12.5px">${o.name}</b><span class="mono">@${o.handle}</span>`;
   $('#upBody').innerHTML=`
@@ -828,6 +854,40 @@ function openUserProfile(u){
          ${made.map(r=>`<li><span class="bdg info">made</span><span style="font-size:12.5px">against @${r.against} — ${r.reason}</span><span class="mono">${r.date}</span></li>`).join('')}
          ${got.map(r=>`<li><span class="bdg err">received</span><span style="font-size:12.5px">from @${r.by} — ${r.reason}</span><span class="mono">${r.date}</span></li>`).join('')}
        </ul>`:'<p class="empty">No grievances touch this name.</p>'}</div>
+   </div>
+   <div class="grid g2 section-gap">
+     <div class="card"><div class="chead"><h3>Community interaction</h3><span class="spacer"></span><span class="sub">circles joined &amp; role</span></div>
+       <ul class="plog">${commJoin.map(m=>row(`<span style="font-size:12.5px"><b>${m.c.name}</b></span><span class="bdg ${m.role==='founder'?'glow':m.role==='moderator'?'warn':'dim'}" style="margin-left:6px">${m.role}</span>`,m.when)).join('')}</ul></div>
+     <div class="card"><div class="chead"><h3>Moderation history</h3><span class="spacer"></span><span class="sub">actions taken on this account</span></div>
+       ${modHist.length?`<ul class="plog">${modHist.map(a=>`<li><span class="bdg ${a.role==='super'?'glow':a.role==='moderator'?'warn':'info'}">${a.role}</span><span style="font-size:12.5px">${a.action} <i style="color:var(--dim)">— ${a.actor}</i></span><span class="mono">${a.t}</span></li>`).join('')}</ul>`:'<p class="empty">No moderation has touched this account.</p>'}</div>
+   </div>`;
+  showPane('userprofile');
+}
+function openModProfile(m){
+  if(!m)return;
+  lastPane=pane==='userprofile'?lastPane:pane;
+  const handle=m.name.toLowerCase().replace(/[^a-z]+/g,'_');
+  const performed=S.audit.filter(a=>a.actor===m.name);
+  const pending=S.modQueue.filter(q=>q.mod===m.name);
+  $('#upBody').innerHTML=`
+   <div class="card up-head">
+     <span class="uav" style="background:${hueBg(m.hue)}">${ini(m.name)}</span>
+     <div style="flex:1;min-width:200px">
+       <h2>${m.name} <span class="bdg warn" style="vertical-align:middle">Warden</span></h2>
+       <span class="mono">@${handle} · ${m.region} · joined ${m.joined}</span>
+       <div style="display:flex;gap:7px;margin-top:9px;flex-wrap:wrap">
+         <span class="bdg ${m.senior?'glow':'dim'}">${m.senior?'Senior warden':'Warden'}</span>
+         ${m.status==='active'?'<span class="bdg ok">Active</span>':'<span class="bdg warn">Pending</span>'}
+         <span class="bdg info">${m.actions} lifetime actions</span>
+         <span class="bdg ${pending.length?'warn':'dim'}">${pending.length} awaiting approval</span>
+       </div>
+     </div>
+   </div>
+   <div class="grid g2 section-gap">
+     <div class="card"><div class="chead"><h3>Actions performed</h3><span class="spacer"></span><span class="sub">this warden's moderation trail</span></div>
+       ${performed.length?`<ul class="plog">${performed.map(a=>`<li><span class="bdg warn">${a.role}</span><span style="font-size:12.5px">${a.action}</span><span class="mono">${a.t}</span></li>`).join('')}</ul>`:'<p class="empty">No actions inscribed yet.</p>'}</div>
+     <div class="card"><div class="chead"><h3>Awaiting approval</h3><span class="spacer"></span><span class="sub">proposed, not yet ratified</span></div>
+       ${pending.length?`<ul class="plog">${pending.map(q=>`<li><span class="bdg ${q.sev}">${q.sev}</span><span style="font-size:12.5px">${q.action}</span></li>`).join('')}</ul>`:'<p class="empty">Nothing pending from this warden.</p>'}</div>
    </div>`;
   showPane('userprofile');
 }
@@ -940,7 +1000,7 @@ function renderMods(){
     a.name.localeCompare(b.name));
   $('#tblMods tbody').innerHTML=sorted.map(m=>`
    <tr data-id="${m.id}">
-    <td><div class="uid"><span class="uav" style="background:${hueBg(m.hue)}">${ini(m.name)}</span>
+    <td><div class="uid" data-modview="1" style="cursor:pointer"><span class="uav" style="background:${hueBg(m.hue)}">${ini(m.name)}</span>
       <div><b>${m.name}</b><span>${m.senior?'Senior warden':'Warden'}</span></div></div></td>
     <td class="mono">${m.region}</td>
     <td class="mono">${m.joined}</td>
@@ -962,6 +1022,8 @@ $('#modSort').addEventListener('click',e=>{
   modSortBy=c.dataset.s;renderMods();
 });
 $('#tblMods').addEventListener('click',e=>{
+  const view=e.target.closest('[data-modview]');
+  if(view){openModProfile(S.mods.find(x=>x.id==view.closest('tr').dataset.id));return}
   const b=e.target.closest('[data-md]');if(!b)return;
   const m=S.mods.find(x=>x.id==b.closest('tr').dataset.id);
   if(b.dataset.md==='rank'){m.senior=!m.senior;inscribe((m.senior?'Promoted':'Demoted')+' moderator',m.name);toast(m.name+(m.senior?' rises to senior warden':' returns to warden'))}
@@ -971,10 +1033,21 @@ $('#tblMods').addEventListener('click',e=>{
   renderMods();
 });
 $('#addMod').addEventListener('click',()=>{
-  const names=['Elif Demir','Marco Silva','Aditi Rao','Yuki Tanaka'];
-  const n=names[S.mods.length%names.length];
-  S.mods.push({id:Date.now(),name:n,region:['APAC','EMEA','AMER'][S.mods.length%3],actions:0,status:'pending',senior:false,hue:(S.mods.length*77)%360});
-  inscribe('Invited new moderator',n);renderMods();toast(n+' summoned to the order');
+  $('#rmName').value='';$('#rmEmail').value='';$('#rmRegion').value='APAC';$('#rmRank').value='false';
+  $('#rmErr').style.display='none';
+  $('#regModOverlay').classList.add('open');setTimeout(()=>$('#rmName').focus(),120);
+});
+$('#rmCancel').addEventListener('click',()=>$('#regModOverlay').classList.remove('open'));
+$('#regModOverlay').addEventListener('click',e=>{if(e.target.id==='regModOverlay')e.target.classList.remove('open')});
+$('#rmGo').addEventListener('click',()=>{
+  const n=$('#rmName').value.trim(),em=$('#rmEmail').value.trim();
+  if(!n||!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(em)){$('#rmErr').style.display='block';return}
+  const today=new Date().toLocaleDateString('en-CA');
+  S.mods.push({id:Date.now(),name:n,region:$('#rmRegion').value,actions:0,status:'pending',
+    senior:$('#rmRank').value==='true',hue:(hashN(n)*7)%360,joined:today});
+  inscribe('Registered new moderator ('+em+')',n);
+  $('#regModOverlay').classList.remove('open');renderMods();
+  toast('Invitation sent to '+n);
 });
 
 /* ═══ VERIFICATION ═══ */
