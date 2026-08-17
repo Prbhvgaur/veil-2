@@ -156,10 +156,10 @@ textarea.input{resize:vertical;min-height:84px}
 
 /* ═══════════ SCREENS & TRANSITIONS ═══════════ */
 .screen{display:none;position:relative;z-index:2;min-height:100dvh}
-.screen.active{display:block;animation:screenIn .5s var(--ease)}
-.screen.leaving{animation:screenOut .28s var(--ease) forwards}
-@keyframes screenIn{from{opacity:0;transform:perspective(1300px) translateX(46px) rotateY(-4deg) scale(.985)}to{opacity:1;transform:none}}
-@keyframes screenOut{to{opacity:0;transform:perspective(1300px) translateX(-46px) rotateY(4deg) scale(.985)}}
+.screen.active{display:block;animation:screenIn .28s ease-out}
+.screen.leaving{animation:screenOut .16s ease-in forwards}
+@keyframes screenIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+@keyframes screenOut{to{opacity:0}}
 .veil-sweep{position:fixed;inset:0;z-index:90;pointer-events:none;transform:translateX(-102%);
   background:linear-gradient(100deg,transparent,var(--purple) 30%,#160E24 50%,var(--purple) 70%,transparent);
   opacity:.96;filter:blur(2px)}
@@ -1296,6 +1296,9 @@ html[data-theme="light"] .tsw-thumb::after{opacity:0}
   </button>
   <button class="rail-item" data-go="settings" data-rail="settings">
     <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.9l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.9-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.2a1.7 1.7 0 0 0-1-1.5 1.7 1.7 0 0 0-1.9.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.9 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.2a1.7 1.7 0 0 0 1.5-1 1.7 1.7 0 0 0-.3-1.9l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.9.3h.1a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.2a1.7 1.7 0 0 0 1 1.5h.1a1.7 1.7 0 0 0 1.9-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.9v.1a1.7 1.7 0 0 0 1.5 1h.2a2 2 0 1 1 0 4h-.2a1.7 1.7 0 0 0-1.5 1Z"/></svg><span class="rail-label">Settings</span>
+  </button>
+  <button class="rail-item" id="railSignOut" data-rail="signout">
+    <svg viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><path d="m16 17 5-5-5-5M21 12H9"/></svg><span class="rail-label">Sign out</span>
   </button>
   <div class="rail-sep"></div>
   <button class="rail-item theme-row" data-theme-toggle aria-label="Toggle theme">
@@ -2635,8 +2638,6 @@ function go(name,opts={}){
   if(name===current&&!opts.force)return;
   const from=$('#scr-'+current),to=$('#scr-'+name);
   if(!to)return;
-  const sweep=$('#veilSweep');
-  sweep.classList.remove('run');void sweep.offsetWidth;sweep.classList.add('run');
   from.classList.add('leaving');
   setTimeout(()=>{
     from.classList.remove('active','leaving');
@@ -3034,8 +3035,13 @@ $('#exportData').addEventListener('click',()=>{
 });
 /* danger zone */
 let confirmCb=null;
-function confirmDialog(title,body,cb){
+function confirmDialog(title,body,cb,opts={}){
   $('#confirmTitle').textContent=title;$('#confirmBody').textContent=body;
+  $('#confirmTitle').classList.toggle('red',!opts.soft);
+  $('#confirmYes').classList.toggle('danger',!opts.soft);
+  $('#confirmYes').classList.toggle('solid',!opts.soft);
+  $('#confirmYes').classList.toggle('primary',!!opts.soft);
+  $('#confirmYes .btn-label').textContent=opts.yes||'Confirm';
   $('#confirmOverlay').classList.add('open');confirmCb=cb;
 }
 $('#confirmCancel').addEventListener('click',()=>$('#confirmOverlay').classList.remove('open'));
@@ -3426,6 +3432,11 @@ function syncRail(name){
 }
 syncRail(current);
 $('#railProfile').addEventListener('click',()=>openProfile(null));
+$('#railSignOut').addEventListener('click',()=>confirmDialog('Leave the Veil?','You will be signed out. Your whispers stay safe in the chamber for your return.',()=>{
+  store.set('authed',false);
+  toast('Signed out. The veil closes softly behind you.');
+  setTimeout(()=>go('landing'),500);
+},{soft:true,yes:'Sign out'}));
 $('#railUser').addEventListener('click',()=>openProfile(null));
 $('#pfAvatar').addEventListener('click',()=>{if(!profileUser)$('#avatarFile').click()});
 /* ═══════════ CUSTOMIZE-MY-VEIL EDITOR ═══════════ */
