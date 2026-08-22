@@ -1297,6 +1297,7 @@ body.app-mode #scr-kindred{padding-left:256px}
   background:rgba(0,0,0,.55);color:#fff;font-size:14px;line-height:1;display:none;align-items:center;justify-content:center;z-index:2}
 .pf-pic:hover .rmpic{display:flex}
 .pf-edit-corner{position:absolute;top:18px;right:18px;z-index:5}
+.pf-edit-corner[hidden]{display:none !important}
 .pf-settings{max-width:560px;margin:26px auto 0;text-align:left}
 .profile-wrap{position:relative}
 @media(max-width:680px){.pf-cover{margin:-34px -20px 0;height:130px}.pf-pics{grid-template-columns:repeat(3,1fr);gap:8px}}
@@ -3072,6 +3073,8 @@ $('#avatarFile').addEventListener('change',e=>{
 });
 const savedAvatar=store.get('avatar',null);
 if(savedAvatar)setAvatarAll(savedAvatar);
+const savedBio=store.get('bio',null);
+if(savedBio!==null){$('#p-bio').value=savedBio;syncBio()}
 /* bio counter */
 const bio=$('#p-bio'),bioCount=$('#bioCount');
 function syncBio(){bioCount.textContent=bio.value.length;bioCount.parentElement.classList.toggle('max',bio.value.length>=120)}
@@ -3554,6 +3557,7 @@ $('#edSave').addEventListener('click',e=>{
   withLoading(e.currentTarget,700,()=>{
     state.name=n;state.handle=h;store.set('name',n);store.set('handle',h);
     $('#p-bio').value=$('#edBio').value.slice(0,120);syncBio();
+    store.set('bio',$('#p-bio').value);
     syncIdentity();$('#editOverlay').classList.remove('open');
     openProfile(null);toast('Your Veil is reborn');
   });
@@ -3817,7 +3821,8 @@ addEventListener('load',function(){
 let deckPool=[],deckIdx=0;
 function buildDeck(){
   const my=store.get('archetype',null);
-  deckPool=[...USERS].sort((a,b)=>((b.arch===my)-(a.arch===my))||((hashStr(a.handle)%13)-(hashStr(b.handle)%13)));
+  const salt=String(Math.floor(Math.random()*99991));
+  deckPool=[...USERS].sort((a,b)=>((b.arch===my)-(a.arch===my))||((hashStr(a.handle+salt)%97)-(hashStr(b.handle+salt)%97)));
   deckIdx=0;renderDeck();
 }
 function renderDeck(){
