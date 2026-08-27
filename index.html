@@ -61,7 +61,10 @@ body{
   transition:color .3s var(--ease);
   overflow-x:hidden; min-height:100dvh;
 }
-html[data-fontsize="small"] body{font-size:13px}
+html{--msg-size:17px}
+html[data-fontsize="small"]{--msg-size:14.5px}
+html[data-fontsize="large"]{--msg-size:19.5px}
+html[data-fontsize="small"] body{font-size:14px}
 html[data-fontsize="large"] body{font-size:17px}
 button{font-family:inherit;cursor:pointer}
 input,textarea,select{font-family:inherit;color:inherit}
@@ -1315,7 +1318,21 @@ body.app-mode #scr-kindred,body.app-mode #scr-connections,body.app-mode #scr-not
 .inbox-head .who h2,.reading-head b,.kin .kmain span,.pf-title,.composer h3,.gs-empty,
 .deck-empty p,.mini-empty,.empty-state .typewriter,.arch-card p,.subpanel h3,.dialog h3,
 .editor-head h3,.tile h3,.step h3,.faq .ans{font-family:var(--font-body);font-style:normal}
-.inbox-msg .mtxt{font-weight:500;font-size:17px;line-height:1.55}
+.inbox-msg .mtxt{font-weight:500;font-size:var(--msg-size);line-height:1.55}
+.msg-card p{font-size:calc(var(--msg-size) - 2px)}
+
+/* compact mode — denser rows, tighter chamber */
+body.compact .row{padding:9px 16px;min-height:44px}
+body.compact .group{margin-bottom:16px}
+body.compact .inbox-msg{padding:16px 18px 10px;margin-bottom:10px}
+body.compact .inbox-msg .mtxt{font-size:calc(var(--msg-size) - 2px)}
+body.compact #inboxList{gap:10px}
+body.compact .chamber-stats .pstat{padding:10px 8px}
+body.compact .chamber-stats .pstat .v{font-size:22px}
+body.compact .conn-row{padding:9px 14px}
+body.compact .notif-row{padding:10px 14px}
+body.compact .reading-head{padding:13px 18px}
+body.compact .react{min-width:38px;height:32px;padding:0 10px}
 .msg-card p{font-weight:500;font-size:15px}
 .testi q{font-weight:450}
 .profile-hero h2,.inbox-head .who h2{font-weight:700;letter-spacing:-.01em}
@@ -3132,6 +3149,7 @@ $$('.tgl').forEach(t=>{
   if(saved!==null)t.setAttribute('aria-checked',saved);
 });
 if(store.get('motion',false)){rootEl.dataset.motion='reduced';$('#motionToggle').setAttribute('aria-checked','true')}
+if(store.get('tgl.compact',false))document.body.classList.add('compact');
 /* segmented */
 $$('.seg').forEach(seg=>$$('button',seg).forEach(b=>b.addEventListener('click',()=>{
   $$('button',seg).forEach(x=>{x.classList.remove('on');x.setAttribute('aria-checked','false')});
