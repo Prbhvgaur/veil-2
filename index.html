@@ -870,6 +870,13 @@ body.app-mode #scr-inbox,body.app-mode #scr-discover,body.app-mode #scr-profile,
 .rail-uinfo{min-width:0;flex:1}
 .rail-uinfo b{display:block;font-size:var(--text-sm);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .rail-uinfo span{font-family:var(--font-mono);font-size:var(--text-xs);color:var(--dim);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;display:block}
+.rail-signout-mini{width:28px;height:28px;flex:none;border-radius:8px;border:1px solid var(--border-strong);
+  background:var(--surface);color:var(--dim);display:inline-flex;align-items:center;justify-content:center;
+  cursor:pointer;transition:color .2s,border-color .2s,box-shadow .25s}
+.rail-signout-mini:hover{color:var(--err);border-color:color-mix(in srgb,var(--err) 55%,transparent);
+  box-shadow:0 0 10px color-mix(in srgb,var(--err) 20%,transparent)}
+.rail-signout-mini svg{width:13px;height:13px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+body.rail-min .rail-signout-mini{display:none}
 @media(max-width:900px){
   .app-rail{top:auto;bottom:0;left:0;right:0;width:auto;height:66px;flex-direction:row;align-items:center;
     justify-content:space-around;gap:0;padding:0 8px;border-right:none;border-top:1px solid var(--border-strong)}
@@ -1466,9 +1473,6 @@ html[data-theme="light"] .vcard .vreveal{background:rgba(255,255,255,.55);color:
   <button class="rail-item" data-go="settings" data-rail="settings">
     <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.9l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.9-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.2a1.7 1.7 0 0 0-1-1.5 1.7 1.7 0 0 0-1.9.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.9 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.2a1.7 1.7 0 0 0 1.5-1 1.7 1.7 0 0 0-.3-1.9l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.9.3h.1a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.2a1.7 1.7 0 0 0 1 1.5h.1a1.7 1.7 0 0 0 1.9-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.9v.1a1.7 1.7 0 0 0 1.5 1h.2a2 2 0 1 1 0 4h-.2a1.7 1.7 0 0 0-1.5 1Z"/></svg><span class="rail-label">Settings</span>
   </button>
-  <button class="rail-item" id="railSignOut" data-rail="signout">
-    <svg viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><path d="m16 17 5-5-5-5M21 12H9"/></svg><span class="rail-label">Sign out</span>
-  </button>
   <div class="rail-sep"></div>
   <button class="rail-item theme-row" data-theme-toggle aria-label="Toggle theme">
     <span class="theme-switch" aria-hidden="true">
@@ -1477,10 +1481,13 @@ html[data-theme="light"] .vcard .vreveal{background:rgba(255,255,255,.55);color:
       <span class="tsw-thumb"></span>
     </span><span class="rail-label">Theme</span>
   </button>
-  <button class="rail-user" id="railUser" aria-label="Open my profile">
+  <div class="rail-user" id="railUser" role="button" tabindex="0" aria-label="Open my profile">
     <span class="avatar" aria-hidden="true"><span id="railInitials">SR</span><img id="railImg" alt="" hidden></span>
     <span class="rail-uinfo"><b id="railName">Saurabh Rakheja</b><span id="railHandle">veil.app/saurabh</span></span>
-  </button>
+    <button class="rail-signout-mini" id="railSignOut" aria-label="Sign out" title="Sign out">
+      <svg viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><path d="m16 17 5-5-5-5M21 12H9"/></svg>
+    </button>
+  </div>
 </aside>
 
 <button class="fab" id="fabCopy" aria-label="Copy my Veil link">
@@ -3694,8 +3701,9 @@ function doSignOut(){
     setTimeout(()=>go('landing'),500);
   },{soft:true,yes:'Sign out'});
 }
-$('#railSignOut').addEventListener('click',doSignOut);
+$('#railSignOut').addEventListener('click',e=>{e.stopPropagation();doSignOut()});
 $('#inboxSignOut').addEventListener('click',doSignOut);
+$('#railUser').addEventListener('keydown',e=>{if(e.key==='Enter')openProfile(null)});
 $('#railUser').addEventListener('click',()=>openProfile(null));
 $('#pfAvatar').addEventListener('click',()=>{if(!profileUser)$('#avatarFile').click()});
 /* ═══════════ CUSTOMIZE-MY-VEIL EDITOR ═══════════ */
