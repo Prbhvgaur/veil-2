@@ -18,7 +18,7 @@
   --ease:cubic-bezier(0.4,0,0.2,1);
   --spring:cubic-bezier(0.34,1.56,0.64,1);
   --font-display:'Instrument Serif',serif;
-  --font-body:'DM Sans',system-ui,sans-serif;
+  --font-body:system-ui,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;
   --font-mono:'JetBrains Mono',monospace;
   --font-condensed:'Bebas Neue',Impact,sans-serif;
 }
@@ -1256,9 +1256,10 @@ body.app-mode .vignette{opacity:.45}
   body.rail-min.app-mode #scr-inbox,body.rail-min.app-mode #scr-discover,body.rail-min.app-mode #scr-kindred,
   body.rail-min.app-mode #scr-profile,body.rail-min.app-mode #scr-settings{padding-left:78px}
 }
-body.app-mode #scr-kindred{padding-left:256px}
+body.app-mode #scr-kindred,body.app-mode #scr-connections,body.app-mode #scr-notifications{padding-left:256px}
+@media(min-width:901px){body.rail-min.app-mode #scr-connections,body.rail-min.app-mode #scr-notifications{padding-left:78px}}
 @media(max-width:900px){.rail-toggle{display:none}
-  body.app-mode #scr-kindred{padding-left:0;padding-bottom:80px}}
+  body.app-mode #scr-kindred,body.app-mode #scr-connections,body.app-mode #scr-notifications{padding-left:0;padding-bottom:80px}}
 
 /* ═══════════ GLOBAL SEARCH ═══════════ */
 .gsearch-card{width:min(640px,94vw);padding:26px 26px 20px;text-align:left;align-self:flex-start;margin-top:9vh}
@@ -1301,6 +1302,88 @@ body.app-mode #scr-kindred{padding-left:256px}
 .pf-settings{max-width:560px;margin:26px auto 0;text-align:left}
 .profile-wrap{position:relative}
 @media(max-width:680px){.pf-cover{margin:-34px -20px 0;height:130px}.pf-pics{grid-template-columns:repeat(3,1fr);gap:8px}}
+
+/* ═══════════ STANDARD FONT PASS — content reads in a standard face ═══════════ */
+.inbox-msg .mtxt,.msg-card p,.testi q,.mfrom,.quiz-q,.deck-card h3,.profile-hero h2,
+.inbox-head .who h2,.reading-head b,.kin .kmain span,.pf-title,.composer h3,.gs-empty,
+.deck-empty p,.mini-empty,.empty-state .typewriter,.arch-card p,.subpanel h3,.dialog h3,
+.editor-head h3,.tile h3,.step h3,.faq .ans{font-family:var(--font-body);font-style:normal}
+.inbox-msg .mtxt{font-weight:500;font-size:17px;line-height:1.55}
+.msg-card p{font-weight:500;font-size:15px}
+.testi q{font-weight:450}
+.profile-hero h2,.inbox-head .who h2{font-weight:700;letter-spacing:-.01em}
+.deck-card h3{font-weight:700;font-size:23px}
+.quiz-q{font-weight:600}
+.dialog h3,.editor-head h3,.subpanel h3,.composer h3{font-weight:700}
+.mfrom{font-size:13px;font-weight:600}
+.reading-head b{font-weight:650}
+
+/* ═══════════ DISCOVER CARD v2 (connection format) ═══════════ */
+.veil-count{font-family:var(--font-mono);font-size:var(--text-xs);letter-spacing:.14em;text-transform:uppercase;
+  color:var(--dim);margin:2px 2px 14px}
+.vcard{text-align:left;cursor:pointer}
+.vcard .vcover{height:112px;position:relative;overflow:hidden;
+  background-image:repeating-linear-gradient(55deg,rgba(255,255,255,.05) 0 1px,transparent 1px 18px),
+    repeating-linear-gradient(-55deg,rgba(255,255,255,.04) 0 1px,transparent 1px 18px)}
+.vcard .vcover::after{content:"";position:absolute;left:50%;top:22px;transform:translateX(-50%);
+  width:86px;height:86px;border-radius:50%;background:rgba(255,255,255,.10)}
+.vcard .vcover::before{content:"";position:absolute;left:50%;bottom:-58px;transform:translateX(-50%);
+  width:190px;height:95px;border-radius:95px 95px 0 0;background:rgba(255,255,255,.07)}
+.vcard .avatar{width:66px;height:66px;font-size:22px;margin:-33px 0 0 20px;border:3px solid var(--card)}
+.vcard .vreveal{position:absolute;margin:-24px 0 0 92px;font-family:var(--font-mono);font-size:8.5px;
+  letter-spacing:.14em;text-transform:uppercase;color:var(--dim);background:rgba(0,0,0,.35);
+  border-radius:99px;padding:3px 9px}
+html[data-theme="light"] .vcard .vreveal{background:rgba(255,255,255,.55);color:#5A4E78}
+.vcard .vinner{padding:10px 20px 20px}
+.vcard .vrow{display:flex;align-items:baseline;gap:10px}
+.vcard .vrow h3{flex:1;font-size:17px;font-weight:700;font-family:var(--font-body)}
+.vcard .vpub{font-family:var(--font-mono);font-size:9.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--dim);white-space:nowrap}
+.vcard .vpub i{display:inline-block;width:6px;height:6px;border-radius:50%;background:var(--ok);margin-right:5px;vertical-align:1px}
+.vcard .vcity{font-size:var(--text-xs);color:var(--dim);margin:1px 0 8px}
+.vcard .vbadge{display:inline-flex;align-items:center;gap:6px;font-family:var(--font-mono);font-size:10px;
+  letter-spacing:.1em;text-transform:uppercase;border-radius:99px;padding:4px 12px;border:1px solid}
+.vcard .vbadge.ok{color:var(--ok);border-color:color-mix(in srgb,var(--ok) 45%,transparent);background:color-mix(in srgb,var(--ok) 9%,transparent)}
+.vcard .vbadge.dim{color:var(--dim);border-color:var(--border-strong)}
+.vcard .vbadge svg{width:11px;height:11px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.vconnect{width:100%;margin-top:14px;display:flex;align-items:center;justify-content:center;gap:8px;
+  border-radius:var(--r-md);border:1px solid var(--glow);min-height:44px;font-weight:700;font-size:13px;
+  letter-spacing:.04em;color:#fff;background:linear-gradient(140deg,var(--purple),color-mix(in srgb,var(--purple) 62%,#241238));
+  box-shadow:0 0 16px var(--glow-soft);transition:box-shadow .25s,transform .18s var(--spring),opacity .2s}
+.vconnect:hover{box-shadow:0 0 26px var(--glow-mid)}
+.vconnect:active{transform:scale(.97)}
+.vconnect svg{width:15px;height:15px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.vconnect.sent{background:var(--surface);color:var(--dim);border-color:var(--border-strong);box-shadow:none;cursor:default}
+.vconnect.linked{background:var(--surface);color:var(--ok);border-color:color-mix(in srgb,var(--ok) 45%,transparent);box-shadow:none;cursor:default}
+
+/* ═══════════ CONNECTIONS & NOTIFICATIONS ═══════════ */
+.conn-wrap{max-width:860px;margin:0 auto;padding:34px 20px 130px}
+.conn-group{margin-bottom:28px}
+.conn-row{display:flex;align-items:center;gap:14px;padding:14px 18px;border-bottom:1px solid var(--border)}
+.conn-row:last-child{border-bottom:none}
+.conn-row .avatar{width:46px;height:46px;font-size:16px;flex:none}
+.conn-row .cmain{flex:1;min-width:0}
+.conn-row .cmain b{display:block;font-size:14px;font-weight:650}
+.conn-row .cmain span{font-size:var(--text-xs);color:var(--dim);display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.conn-acts{display:flex;gap:8px;flex-wrap:wrap}
+.notif-row{display:flex;gap:14px;align-items:flex-start;padding:15px 18px;border-bottom:1px solid var(--border);position:relative}
+.notif-row:last-child{border-bottom:none}
+.notif-row.unread{background:color-mix(in srgb,var(--glow-soft) 45%,transparent)}
+.notif-row.unread::before{content:"";position:absolute;left:6px;top:50%;transform:translateY(-50%);
+  width:7px;height:7px;border-radius:50%;background:var(--glow);box-shadow:0 0 8px var(--glow-mid)}
+.notif-row .nico{width:34px;height:34px;flex:none;border-radius:50%;border:1px solid var(--border-strong);
+  background:var(--surface);display:flex;align-items:center;justify-content:center;color:var(--glow)}
+.notif-row .nico svg{width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+.notif-row .nmain{flex:1}
+.notif-row .nmain p{font-size:14px}
+.notif-row .nmain span{font-family:var(--font-mono);font-size:10.5px;color:var(--dim);letter-spacing:.08em}
+
+/* ═══════════ INVITES ═══════════ */
+.invite-grid{display:flex;flex-direction:column;gap:9px;padding:16px 18px}
+.invite-row{display:flex;align-items:center;gap:12px;font-family:var(--font-mono);font-size:13px}
+.invite-row code{flex:1;letter-spacing:.14em;color:var(--glow);background:var(--surface);
+  border:1px dashed var(--border-strong);border-radius:9px;padding:9px 14px}
+.invite-row code.used{color:var(--dim);text-decoration:line-through;border-style:solid}
+.invite-note{font-family:var(--font-mono);font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--dim);padding:0 18px 16px}
 
 /* ═══════════ MOBILE FORMAT FIXES (must stay last — wins all cascades) ═══════════ */
 @media(max-width:860px){
@@ -1370,6 +1453,12 @@ body.app-mode #scr-kindred{padding-left:256px}
   </button>
   <button class="rail-item" data-go="discover" data-rail="discover">
     <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="m15.5 8.5-2 5-5 2 2-5z"/></svg><span class="rail-label">Discover</span>
+  </button>
+  <button class="rail-item" data-go="connections" data-rail="connections">
+    <svg viewBox="0 0 24 24"><circle cx="9" cy="8" r="3.5"/><path d="M2.5 20c0-3.6 2.9-5.7 6.5-5.7s6.5 2.1 6.5 5.7"/><path d="M16.5 4.5a3.5 3.5 0 0 1 0 7M15 14.6c3 .2 6 2 6 5.4"/></svg><span class="rail-label">Connections</span><span class="rail-badge" id="connCount">0</span>
+  </button>
+  <button class="rail-item" data-go="notifications" data-rail="notifications">
+    <svg viewBox="0 0 24 24"><path d="M18 9a6 6 0 1 0-12 0c0 6-2.5 7-2.5 7h17S18 15 18 9Z"/><path d="M10 20a2.2 2.2 0 0 0 4 0"/></svg><span class="rail-label">Notifications</span><span class="rail-badge" id="notifCount">0</span>
   </button>
   <button class="rail-item" id="railProfile" data-rail="profile">
     <svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 3.6-6.5 8-6.5s8 2.5 8 6.5"/></svg><span class="rail-label">My Veil</span>
@@ -2101,7 +2190,6 @@ body.app-mode #scr-kindred{padding-left:256px}
       <button class="side-item on" data-pane="notifications" role="tab"><svg viewBox="0 0 24 24"><path d="M18 9a6 6 0 1 0-12 0c0 6-2.5 7-2.5 7h17S18 15 18 9Z"/><path d="M10 20a2.2 2.2 0 0 0 4 0"/></svg>Notifications</button>
       <button class="side-item" data-pane="privacy" role="tab"><svg viewBox="0 0 24 24"><path d="M12 2 4 6v6c0 5 3.4 8.4 8 10 4.6-1.6 8-5 8-10V6l-8-4Z"/><path d="m9 12 2 2 4-4"/></svg>Privacy &amp; Safety</button>
       <button class="side-item" data-pane="appearance" role="tab"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 3a9 9 0 0 0 0 18c1.2 0 1.8-.8 1.8-1.7 0-.8-.5-1.2-.5-2 0-1 .8-1.8 1.9-1.8H17a4.5 4.5 0 0 0 4-4.6C20.8 6.3 16.8 3 12 3Z"/><circle cx="8" cy="10" r="1.1" fill="currentColor"/><circle cx="12" cy="7.5" r="1.1" fill="currentColor"/><circle cx="16" cy="10" r="1.1" fill="currentColor"/></svg>Appearance</button>
-      <button class="side-item" data-pane="account" role="tab"><svg viewBox="0 0 24 24"><rect x="3" y="10" width="18" height="11" rx="2"/><path d="M7 10V7a5 5 0 0 1 10 0v3"/></svg>Account</button>
       <button class="side-item danger" data-pane="danger" role="tab"><svg viewBox="0 0 24 24"><path d="M12 3 2 20h20L12 3Z"/><path d="M12 10v4"/><circle cx="12" cy="17" r=".5" fill="currentColor"/></svg>Danger Zone</button>
     </aside>
 
@@ -2215,25 +2303,7 @@ body.app-mode #scr-kindred{padding-left:256px}
         </div>
       </div>
 
-      <!-- ACCOUNT -->
-      <div class="pane" id="pane-account">
-        <span class="plaque pane-plaque">The ledger</span>
-        <h2>Account</h2>
-        <div class="group ornate">
-          <div class="row"><span class="rico"><svg viewBox="0 0 24 24"><rect x="2.5" y="5" width="19" height="14" rx="2.5"/><path d="m3.5 6.5 8.5 6.5 8.5-6.5"/></svg></span>
-            <div class="rmain"><div class="rlabel">Email address</div><div class="rdesc" id="acctEmail">srakheja1@gmail.com</div></div>
-            <div class="rctrl"><button class="linklike" id="changeEmail">Change</button></div></div>
-          <div class="row"><span class="rico"><svg viewBox="0 0 24 24"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg></span>
-            <div class="rmain"><div class="rlabel">Change username</div><div class="rdesc">veil.app/<span id="acctHandle">saurabh</span></div></div>
-            <div class="rctrl"><button class="linklike" id="changeHandle">Edit</button></div></div>
-          <div class="row"><span class="rico"><svg viewBox="0 0 24 24"><path d="M12 3v12m0 0 4-4m-4 4-4-4"/><path d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2"/></svg></span>
-            <div class="rmain"><div class="rlabel">Export my data</div><div class="rdesc">Every whisper, sealed in a JSON grimoire</div></div>
-            <div class="rctrl"><button class="linklike" id="exportData">Download</button></div></div>
-          <div class="row"><span class="rico"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg></span>
-            <div class="rmain"><div class="rlabel">Connected apps</div><div class="rdesc">Instagram story sharing, TikTok link</div></div>
-            <div class="rctrl"><span class="badge">2</span><button class="chevbtn" aria-label="Manage connected apps" onclick="toast('Connected apps — coming soon')"><svg viewBox="0 0 24 24"><path d="m9 6 6 6-6 6"/></svg></button></div></div>
-        </div>
-      </div>
+      <!-- Account moved to My Veil -->
 
       <!-- DANGER -->
       <div class="pane" id="pane-danger">
@@ -2269,6 +2339,7 @@ body.app-mode #scr-kindred{padding-left:256px}
         <svg viewBox="0 0 24 24"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>
       </button>
       <span class="spacer"></span>
+      <button class="btn ghost" id="inboxSignOut" style="padding:10px 20px;min-height:40px"><span class="btn-label">Sign out</span></button>
     </header>
     <div class="chamber-stats">
       <div class="pstat ornate"><div class="v"><svg viewBox="0 0 24 24"><rect x="2.5" y="5" width="19" height="14" rx="2.5"/><path d="m3.5 6.5 8.5 6.5 8.5-6.5"/></svg><span id="chWhispers">0</span></div><div class="l">Whispers kept</div></div>
@@ -2365,6 +2436,27 @@ body.app-mode #scr-kindred{padding-left:256px}
           <div class="rmain"><div class="rlabel">Public profile</div><div class="rdesc">Show your Veil on the Discovery page</div></div>
           <div class="rctrl"><button class="tgl" role="switch" aria-checked="false" data-setting="publicProfile" aria-label="Public profile"><span class="track"></span><span class="thumb"></span></button></div>
         </div>
+        <div class="row"><span class="rico"><svg viewBox="0 0 24 24"><rect x="2.5" y="5" width="19" height="14" rx="2.5"/><path d="m3.5 6.5 8.5 6.5 8.5-6.5"/></svg></span>
+          <div class="rmain"><div class="rlabel">Email address</div><div class="rdesc" id="acctEmail">srakheja1@gmail.com</div></div>
+          <div class="rctrl"><button class="linklike" id="changeEmail">Change</button></div></div>
+        <div class="row"><span class="rico"><svg viewBox="0 0 24 24"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg></span>
+          <div class="rmain"><div class="rlabel">Change username</div><div class="rdesc">veil.app/<span id="acctHandle">saurabh</span></div></div>
+          <div class="rctrl"><button class="linklike" id="changeHandle">Edit</button></div></div>
+        <div class="row"><span class="rico"><svg viewBox="0 0 24 24"><path d="M12 3v12m0 0 4-4m-4 4-4-4"/><path d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2"/></svg></span>
+          <div class="rmain"><div class="rlabel">Export my data</div><div class="rdesc">Every whisper, sealed in a JSON grimoire</div></div>
+          <div class="rctrl"><button class="linklike" id="exportData">Download</button></div></div>
+        <div class="row"><span class="rico"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg></span>
+          <div class="rmain"><div class="rlabel">Connected apps</div><div class="rdesc">Instagram story sharing, TikTok link</div></div>
+          <div class="rctrl"><span class="badge">2</span><button class="chevbtn" aria-label="Manage connected apps" onclick="toast('Connected apps — coming soon')"><svg viewBox="0 0 24 24"><path d="m9 6 6 6-6 6"/></svg></button></div></div>
+      </div>
+      <div class="pf-settings group ornate" id="pfInvites">
+        <div class="row" style="border-bottom:1px solid var(--border-strong)">
+          <span class="rico"><svg viewBox="0 0 24 24"><rect x="3" y="8" width="18" height="12" rx="2"/><path d="M3 8l9 6 9-6M12 3v5M9.5 5.5 12 3l2.5 2.5"/></svg></span>
+          <div class="rmain"><div class="rlabel">Invitations</div><div class="rdesc">Five keys to hand out — choose your kindred well</div></div>
+          <div class="rctrl"><span class="badge" id="invLeft">5 left</span></div>
+        </div>
+        <div class="invite-grid" id="inviteGrid"></div>
+        <p class="invite-note">Users hold 5 invitations · wardens 20 · the sanctum, unbound</p>
       </div>
     </div>
 
@@ -2381,6 +2473,40 @@ body.app-mode #scr-kindred{padding-left:256px}
 </section>
 
 <!-- ════════════ DISCOVER ════════════ -->
+<section class="screen" id="scr-connections">
+  <div class="conn-wrap">
+    <div class="disc-head" style="margin-bottom:28px">
+      <span class="plaque">The bonds</span>
+      <h1 style="font-family:var(--font-condensed);font-weight:400;text-transform:uppercase;font-size:clamp(34px,4.6vw,52px);line-height:.95;margin-top:14px">Your <em style="font-family:var(--font-display);font-style:italic;text-transform:none;color:var(--glow);text-shadow:0 0 12px var(--glow-mid)">connections</em></h1>
+    </div>
+    <div class="group ornate conn-group">
+      <div class="row" style="border-bottom:1px solid var(--border-strong)"><div class="rmain"><div class="rlabel">Incoming requests</div><div class="rdesc">Veils asking to link with yours</div></div></div>
+      <div id="connIncoming"></div>
+    </div>
+    <div class="group ornate conn-group">
+      <div class="row" style="border-bottom:1px solid var(--border-strong)"><div class="rmain"><div class="rlabel">Sent requests</div><div class="rdesc">Awaiting their word</div></div></div>
+      <div id="connOutgoing"></div>
+    </div>
+    <div class="group ornate conn-group">
+      <div class="row" style="border-bottom:1px solid var(--border-strong)"><div class="rmain"><div class="rlabel">Connected</div><div class="rdesc">Identities revealed to each other</div></div></div>
+      <div id="connLinked"></div>
+    </div>
+  </div>
+</section>
+
+<section class="screen" id="scr-notifications">
+  <div class="conn-wrap">
+    <div class="disc-head" style="margin-bottom:28px">
+      <span class="plaque">The bells</span>
+      <h1 style="font-family:var(--font-condensed);font-weight:400;text-transform:uppercase;font-size:clamp(34px,4.6vw,52px);line-height:.95;margin-top:14px">What <em style="font-family:var(--font-display);font-style:italic;text-transform:none;color:var(--glow);text-shadow:0 0 12px var(--glow-mid)">stirred</em></h1>
+    </div>
+    <div style="display:flex;justify-content:flex-end;margin-bottom:14px">
+      <button class="abtn-like linklike" id="notifReadAll">Mark all as read</button>
+    </div>
+    <div class="group ornate" id="notifList"></div>
+  </div>
+</section>
+
 <section class="screen" id="scr-kindred">
   <div class="disc-wrap">
     <div class="disc-head">
@@ -2416,6 +2542,7 @@ body.app-mode #scr-kindred{padding-left:256px}
       <button class="chip" data-arch="trickster">Tricksters</button>
       <button class="chip" data-arch="guardian">Guardians</button>
     </div>
+    <p class="veil-count" id="veilCount"></p>
     <div class="veil-grid" id="veilGrid"></div>
     <div class="sec-head reveal" style="margin-bottom:26px">
       <span class="plaque">This week's séance</span>
@@ -2709,7 +2836,7 @@ function withLoading(btn,ms,fn){
 /* ═══════════ ROUTER ═══════════ */
 let current='landing';
 $('#veilSweep').addEventListener('animationend',e=>e.target.classList.remove('run'));
-const APP_LOCKED=['inbox','kindred','discover','profile','settings'];
+const APP_LOCKED=['inbox','kindred','discover','connections','notifications','profile','settings'];
 if(store.get('archetype',null)&&store.get('authed',null)===null)store.set('authed',true);
 function go(name,opts={}){
   if(APP_LOCKED.includes(name)&&!store.get('authed',false)){
@@ -3392,15 +3519,15 @@ function finishQuiz(){
 
 /* ═══════════ DISCOVERY DATA ═══════════ */
 const USERS=[
- {handle:'moonlit_mara',name:'Mara V.',bio:'poet. crybaby. tell me your worst.',arch:'c',whispers:412,hue:264},
- {handle:'quietkyle',name:'Kyle',bio:'i notice everything. try me.',arch:'o',whispers:389,hue:210},
- {handle:'gremlin_hours',name:'Ravi',bio:'professional bad influence (affectionate)',arch:'t',whispers:531,hue:32},
- {handle:'saint_of_sundays',name:'Ama',bio:'your emergency contact in spirit.',arch:'g',whispers:298,hue:150},
- {handle:'inkstained_iris',name:'Iris',bio:'writing a book about all of you.',arch:'o',whispers:276,hue:290},
- {handle:'chaos.coordinator',name:'Dee',bio:'ask me about the ferret incident.',arch:'t',whispers:463,hue:12},
- {handle:'softest_thorn',name:'June',bio:'confessions welcome. judgement never.',arch:'c',whispers:355,hue:330},
- {handle:'nightwatch_niko',name:'Niko',bio:'the friend who walks you home.',arch:'g',whispers:241,hue:180},
- {handle:'static.and.stars',name:'Wren',bio:'send me the thing you almost posted.',arch:'c',whispers:322,hue:248}
+ {handle:'moonlit_mara',name:'Mara V.',bio:'poet. crybaby. tell me your worst.',arch:'c',whispers:412,hue:264,city:'Delhi',verified:true},
+ {handle:'quietkyle',name:'Kyle',bio:'i notice everything. try me.',arch:'o',whispers:389,hue:210,city:'Mumbai',verified:false},
+ {handle:'gremlin_hours',name:'Ravi',bio:'professional bad influence (affectionate)',arch:'t',whispers:531,hue:32,city:'Bengaluru',verified:true},
+ {handle:'saint_of_sundays',name:'Ama',bio:'your emergency contact in spirit.',arch:'g',whispers:298,hue:150,city:'Pune',verified:false},
+ {handle:'inkstained_iris',name:'Iris',bio:'writing a book about all of you.',arch:'o',whispers:276,hue:290,city:'Delhi',verified:true},
+ {handle:'chaos.coordinator',name:'Dee',bio:'ask me about the ferret incident.',arch:'t',whispers:463,hue:12,city:'Goa',verified:false},
+ {handle:'softest_thorn',name:'June',bio:'confessions welcome. judgement never.',arch:'c',whispers:355,hue:330,city:'Jaipur',verified:true},
+ {handle:'nightwatch_niko',name:'Niko',bio:'the friend who walks you home.',arch:'g',whispers:241,hue:180,city:'Mumbai',verified:false},
+ {handle:'static.and.stars',name:'Wren',bio:'send me the thing you almost posted.',arch:'c',whispers:322,hue:248,city:'Kolkata',verified:false}
 ];
 const PIN_POOL=[
  "you changed the whole room's energy when you walked in. you never notice.",
@@ -3413,19 +3540,39 @@ const PIN_POOL=[
 const archName=k=>ARCHETYPES[k]?ARCHETYPES[k].name:'The Unread';
 function avatarBg(hue){return `linear-gradient(140deg,hsl(${hue} 45% 42%),hsl(${(hue+40)%360} 55% 22%))`}
 
+function getConn(){
+  let c=store.get('conn',null);
+  if(!c){c={in:['quietkyle','softest_thorn','nightwatch_niko'],out:[],linked:[]};store.set('conn',c)}
+  return c;
+}
+function setConn(c){store.set('conn',c)}
 function renderVeils(){
   const arch=$('#discChips .chip.on').dataset.arch;
   const list=USERS.filter(u=>arch==='all'||ARCHETYPES[u.arch].key===arch);
-  $('#veilGrid').innerHTML=list.map((u,i)=>`
+  $('#veilCount').textContent=list.length+(list.length===1?' veil matches':' veils match')+' your filters';
+  const conn=getConn();
+  $('#veilGrid').innerHTML=list.map(u=>{
+    const st=conn.linked.includes(u.handle)?'linked':conn.out.includes(u.handle)?'sent':'';
+    const btn=st==='linked'
+      ?'<button class="vconnect linked" data-noop="1"><svg viewBox="0 0 24 24"><path d="m5 13 4 4L19 7"/></svg>Connected</button>'
+      :st==='sent'
+      ?'<button class="vconnect sent" data-noop="1"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg>Requested</button>'
+      :`<button class="vconnect" data-connect="${u.handle}"><svg viewBox="0 0 24 24"><path d="M10 13a5 5 0 0 0 7.5.5l3-3a5 5 0 0 0-7-7l-1.7 1.7"/><path d="M14 11a5 5 0 0 0-7.5-.5l-3 3a5 5 0 0 0 7 7l1.7-1.7"/></svg>Request connection</button>`;
+    return `
     <article class="vcard" data-h="${u.handle}" role="button" tabindex="0" aria-label="Visit ${u.handle}">
-      <div class="vcover" style="background:linear-gradient(140deg,hsl(${u.hue} 50% 30%),hsl(${(u.hue+60)%360} 45% 13%))"></div>
+      <div class="vcover" style="background-color:hsl(${u.hue} 42% 21%)"></div>
       <button class="avatar" style="background:${avatarBg(u.hue)}" data-peek="${u.handle}" aria-label="Expand ${u.name}'s picture">${initials(u.name)}</button>
+      <span class="vreveal">face revealed when connected</span>
       <div class="vinner">
-        <h3>${u.name}</h3><p class="vh">veil.app/${u.handle}</p>
-        <p class="vbio">${u.bio}</p>
-        <span class="varch">${archName(u.arch)}</span>
+        <div class="vrow"><h3>${u.name}</h3><span class="vpub"><i></i>Public</span></div>
+        <p class="vcity">${u.city} · @${u.handle} · ${archName(u.arch)}</p>
+        <span class="vbadge ${u.verified?'ok':'dim'}">${u.verified
+          ?'<svg viewBox="0 0 24 24"><path d="m5 13 4 4L19 7"/></svg>Verified'
+          :'<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 8v4m0 3.5v.5"/></svg>Unverified'}</span>
+        <p class="vbio" style="margin-top:9px">${u.bio}</p>
+        ${btn}
       </div>
-    </article>`).join('')||'<p style="grid-column:1/-1;text-align:center;color:var(--dim)">The fog holds no one by that name.</p>';
+    </article>`}).join('')||'<p style="grid-column:1/-1;text-align:center;color:var(--dim)">The fog holds no one by that name.</p>';
 }
 function renderLeader(){
   const top=[...USERS].sort((a,b)=>b.whispers-a.whispers).slice(0,5);
@@ -3443,6 +3590,18 @@ $$('#discChips .chip').forEach(c=>c.addEventListener('click',()=>{
 document.addEventListener('click',e=>{
   const pk=e.target.closest('[data-peek]');
   if(pk){e.stopPropagation();openPeek(USERS.find(u=>u.handle===pk.dataset.peek));return}
+  const cb=e.target.closest('[data-connect]');
+  if(cb){
+    e.stopPropagation();
+    const h=cb.dataset.connect,c=getConn();
+    if(!c.out.includes(h)){
+      c.out.push(h);setConn(c);
+      renderVeils();renderConnections();
+      toast('Request sent — they see your veil, never your face');
+    }
+    return;
+  }
+  if(e.target.closest('[data-noop]')){e.stopPropagation();return}
   const v=e.target.closest('.vcard');if(v)openProfile(USERS.find(u=>u.handle===v.dataset.h));
 });
 let peekUser=null;
@@ -3512,7 +3671,8 @@ function openProfile(user){
   go('profile',{force:true});
 }
 function renderPfPics(me){
-  const pics=me?store.get('pics',[null,null,null]):[null,null,null];
+  let pics=me?store.get('pics',[]):[null,null,null];
+  if(me){pics=pics.slice(0,6);while(pics.length<6)pics.push(null)}
   const addIco='<svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>';
   const maskIco2='<svg viewBox="0 0 24 24"><path d="M12 3C8 3 5.5 5 5.5 9c0 5 2.7 9 6.5 11.5C15.8 18 18.5 14 18.5 9c0-4-2.5-6-6.5-6Z"/></svg>';
   $('#pfPics').innerHTML=pics.map((p,i)=>me
@@ -3522,16 +3682,20 @@ function renderPfPics(me){
   ).join('');
 }
 function syncRail(name){
-  document.body.classList.toggle('app-mode',['inbox','kindred','discover','profile','settings'].includes(name));
+  document.body.classList.toggle('app-mode',APP_LOCKED.includes(name));
   $$('.rail-item[data-rail]').forEach(b=>b.classList.toggle('on',b.dataset.rail===name));
 }
 syncRail(current);
 $('#railProfile').addEventListener('click',()=>openProfile(null));
-$('#railSignOut').addEventListener('click',()=>confirmDialog('Leave the Veil?','You will be signed out. Your whispers stay safe in the chamber for your return.',()=>{
-  store.set('authed',false);
-  toast('Signed out. The veil closes softly behind you.');
-  setTimeout(()=>go('landing'),500);
-},{soft:true,yes:'Sign out'}));
+function doSignOut(){
+  confirmDialog('Leave the Veil?','You will be signed out. Your whispers stay safe in the chamber for your return.',()=>{
+    store.set('authed',false);
+    toast('Signed out. The veil closes softly behind you.');
+    setTimeout(()=>go('landing'),500);
+  },{soft:true,yes:'Sign out'});
+}
+$('#railSignOut').addEventListener('click',doSignOut);
+$('#inboxSignOut').addEventListener('click',doSignOut);
 $('#railUser').addEventListener('click',()=>openProfile(null));
 $('#pfAvatar').addEventListener('click',()=>{if(!profileUser)$('#avatarFile').click()});
 /* ═══════════ CUSTOMIZE-MY-VEIL EDITOR ═══════════ */
@@ -3894,6 +4058,123 @@ $('#deckMeet').addEventListener('click',()=>deckResolve(1));
 $('#deckReset').addEventListener('click',buildDeck);
 buildDeck();
 
+/* ═══════════ CONNECTIONS ═══════════ */
+function connRow(u,acts){
+  return `<div class="conn-row" data-ch="${u.handle}">
+    <span class="avatar" aria-hidden="true" style="background:${avatarBg(u.hue)}">${initials(u.name)}</span>
+    <div class="cmain"><b>${u.name} ${u.verified?'<span style="color:var(--glow)">✦</span>':''}</b>
+    <span>${u.city} · @${u.handle} · ${u.bio}</span></div>
+    <div class="conn-acts">${acts}</div></div>`;
+}
+function renderConnections(){
+  const c=getConn();
+  const by=h=>USERS.find(u=>u.handle===h);
+  $('#connCount').textContent=c.in.length;
+  $('#connCount').style.display=c.in.length?'':'none';
+  $('#connIncoming').innerHTML=c.in.map(h=>connRow(by(h),
+    `<button class="btn primary" data-cacc="${h}" style="padding:9px 18px;min-height:38px"><span class="btn-label">Accept</span></button>
+     <button class="btn ghost" data-cdec="${h}" style="padding:9px 16px;min-height:38px"><span class="btn-label">Decline</span></button>`)).join('')
+    ||'<p class="mini-empty" style="padding:26px 0">No one waits at your door.</p>';
+  $('#connOutgoing').innerHTML=c.out.map(h=>connRow(by(h),
+    `<span class="bdg-like mono" style="color:var(--dim);font-family:var(--font-mono);font-size:11px">awaiting…</span>
+     <button class="btn ghost" data-ccan="${h}" style="padding:9px 16px;min-height:38px"><span class="btn-label">Cancel</span></button>`)).join('')
+    ||'<p class="mini-empty" style="padding:26px 0">You have asked no one. Bold of you to wait.</p>';
+  $('#connLinked').innerHTML=c.linked.map(h=>connRow(by(h),
+    `<button class="btn ghost" data-cvis="${h}" style="padding:9px 16px;min-height:38px"><span class="btn-label">Visit</span></button>`)).join('')
+    ||'<p class="mini-empty" style="padding:26px 0">No bonds sealed yet. Faces stay in the fog.</p>';
+}
+document.addEventListener('click',e=>{
+  const acc=e.target.closest('[data-cacc]'),dec=e.target.closest('[data-cdec]'),
+        can=e.target.closest('[data-ccan]'),vis=e.target.closest('[data-cvis]');
+  if(!acc&&!dec&&!can&&!vis)return;
+  const c=getConn();
+  if(acc){
+    const h=acc.dataset.cacc;
+    c.in=c.in.filter(x=>x!==h);c.linked.push(h);setConn(c);
+    const u=USERS.find(x=>x.handle===h);
+    pushNotif('connect',`You and ${u.name} are now connected — faces revealed to each other.`);
+    toast('Bond sealed with '+u.name);
+  }
+  if(dec){const h=dec.dataset.cdec;c.in=c.in.filter(x=>x!==h);setConn(c);toast('Request declined, gently')}
+  if(can){const h=can.dataset.ccan;c.out=c.out.filter(x=>x!==h);setConn(c);toast('Request withdrawn')}
+  if(vis){openProfile(USERS.find(x=>x.handle===vis.dataset.cvis));return}
+  renderConnections();renderVeils();
+});
+
+/* ═══════════ NOTIFICATIONS ═══════════ */
+const NOTIF_ICONS={
+ whisper:'<svg viewBox="0 0 24 24"><path d="M4 4h16v12H7l-3 3z"/></svg>',
+ connect:'<svg viewBox="0 0 24 24"><circle cx="9" cy="8" r="3.5"/><path d="M2.5 20c0-3.6 2.9-5.7 6.5-5.7s6.5 2.1 6.5 5.7"/><path d="M16.5 4.5a3.5 3.5 0 0 1 0 7"/></svg>',
+ react:'<svg viewBox="0 0 24 24"><path d="M19.5 12.6 12 20l-7.5-7.4a5 5 0 1 1 7.5-6.6 5 5 0 1 1 7.5 6.6Z"/></svg>',
+ system:'<svg viewBox="0 0 24 24"><path d="M12 2 4 6v6c0 5 3.4 8.4 8 10 4.6-1.6 8-5 8-10V6l-8-4Z"/></svg>'};
+function getNotifs(){
+  let n=store.get('notifs',null);
+  if(!n){n=[
+    {id:1,kind:'whisper',text:'A new whisper slipped into your chamber.',time:'2h ago',unread:true},
+    {id:2,kind:'connect',text:'Kyle requested a connection.',time:'9h ago',unread:true},
+    {id:3,kind:'react',text:'Someone blessed your shared whisper with a flame.',time:'1d ago',unread:false},
+    {id:4,kind:'system',text:'Your ward filtered 2 messages this week. They never reached you.',time:'2d ago',unread:false},
+    {id:5,kind:'system',text:'Your archetype reading is ready to retake whenever you wish.',time:'5d ago',unread:false}
+  ];store.set('notifs',n)}
+  return n;
+}
+function pushNotif(kind,text){
+  const n=getNotifs();
+  n.unshift({id:Date.now(),kind,text,time:'just now',unread:true});
+  store.set('notifs',n.slice(0,30));renderNotifs();
+}
+function renderNotifs(){
+  const n=getNotifs();
+  const unread=n.filter(x=>x.unread).length;
+  $('#notifCount').textContent=unread;
+  $('#notifCount').style.display=unread?'':'none';
+  $('#notifList').innerHTML=n.map(x=>`
+    <div class="notif-row ${x.unread?'unread':''}" data-nid="${x.id}">
+      <span class="nico" aria-hidden="true">${NOTIF_ICONS[x.kind]||NOTIF_ICONS.system}</span>
+      <div class="nmain"><p>${x.text}</p><span>${x.time}</span></div>
+    </div>`).join('')||'<p class="mini-empty" style="padding:26px 0">The bells are silent.</p>';
+}
+$('#notifReadAll').addEventListener('click',()=>{
+  const n=getNotifs();n.forEach(x=>x.unread=false);store.set('notifs',n);
+  renderNotifs();toast('All bells silenced');
+});
+$('#notifList').addEventListener('click',e=>{
+  const r=e.target.closest('[data-nid]');if(!r)return;
+  const n=getNotifs();const x=n.find(i=>i.id==r.dataset.nid);
+  if(x&&x.unread){x.unread=false;store.set('notifs',n);renderNotifs()}
+});
+
+/* ═══════════ INVITATIONS (5 per user) ═══════════ */
+function getInvites(){
+  let v=store.get('invites',null);
+  if(!v){
+    v=Array.from({length:5},()=>({code:'VEIL-'+(1000+Math.floor(Math.random()*9000)),used:false}));
+    v[3].used=true; /* one claimed, for the demo ledger */
+    store.set('invites',v);
+  }
+  return v;
+}
+function renderInvites(){
+  const v=getInvites();
+  const left=v.filter(i=>!i.used).length;
+  $('#invLeft').textContent=left+' left';
+  $('#inviteGrid').innerHTML=v.map((i,idx)=>`
+    <div class="invite-row">
+      <code class="${i.used?'used':''}">${i.code}</code>
+      ${i.used
+        ?'<span class="bdg-like" style="font-family:var(--font-mono);font-size:10px;color:var(--ok);letter-spacing:.14em">CLAIMED</span>'
+        :`<button class="btn ghost" data-inv="${idx}" style="padding:8px 16px;min-height:36px"><span class="btn-label">Copy</span></button>`}
+    </div>`).join('');
+}
+$('#inviteGrid').addEventListener('click',e=>{
+  const b=e.target.closest('[data-inv]');if(!b)return;
+  const v=getInvites();
+  navigator.clipboard.writeText('https://veil.app/join/'+v[+b.dataset.inv].code).then(
+    ()=>toast('Invitation copied — choose your kindred well'),
+    ()=>toast('Could not copy the key','error'));
+});
+renderConnections();renderNotifs();renderInvites();
+
 /* ═══════════ COLLAPSIBLE RAIL ═══════════ */
 $('#railToggle').addEventListener('click',()=>{
   const min=document.body.classList.toggle('rail-min');
@@ -3959,7 +4240,7 @@ let picTarget=0;
 $('#pfPics').addEventListener('click',e=>{
   const rm=e.target.closest('[data-rmpic]');
   if(rm){
-    const pics=store.get('pics',[null,null,null]);
+    const pics=store.get('pics',[]);
     pics[+rm.dataset.rmpic]=null;store.set('pics',pics);
     renderPfPics(true);toast('Picture returned to the fog');
     return;
@@ -3970,7 +4251,8 @@ $('#pfPics').addEventListener('click',e=>{
 $('#picFile').addEventListener('change',e=>{
   const f=e.target.files[0];if(!f)return;
   readScaled(f,512,512,data=>{
-    const pics=store.get('pics',[null,null,null]);
+    const pics=store.get('pics',[]);
+    while(pics.length<6)pics.push(null);
     pics[picTarget]=data;
     try{store.set('pics',pics)}catch(err){toast('Picture kept for this visit only','error')}
     renderPfPics(true);toast('Picture placed in your chamber');
