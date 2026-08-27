@@ -879,7 +879,16 @@ body.app-mode #scr-inbox,body.app-mode #scr-discover,body.app-mode #scr-profile,
 .rail-signout-mini:hover{color:var(--err);border-color:color-mix(in srgb,var(--err) 55%,transparent);
   box-shadow:0 0 10px color-mix(in srgb,var(--err) 20%,transparent)}
 .rail-signout-mini svg{width:13px;height:13px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
-body.rail-min .rail-signout-mini{display:none}
+@media(min-width:901px){
+  body.rail-min .rail-user{flex-direction:column;gap:8px;padding:8px 0}
+  body.rail-min .rail-signout-mini{display:inline-flex}
+}
+@media(max-width:900px){
+  .app-rail .rail-user{display:flex !important;padding:0;border:none;background:none;box-shadow:none;margin:0;width:auto}
+  .rail-user .avatar,.rail-user .rail-uinfo{display:none !important}
+  .rail-signout-mini{width:40px;height:40px}
+  .rail-signout-mini svg{width:16px;height:16px}
+}
 @media(max-width:900px){
   .app-rail{top:auto;bottom:0;left:0;right:0;width:auto;height:66px;flex-direction:row;align-items:center;
     justify-content:space-around;gap:0;padding:0 8px;border-right:none;border-top:1px solid var(--border-strong)}
@@ -2359,11 +2368,7 @@ html[data-theme="light"] .vcard .vreveal{background:rgba(255,255,255,.55);color:
         <h2 id="inboxName">Saurabh Rakheja</h2>
         <p class="h">veil.app/<span id="inboxHandle">saurabh</span></p>
       </div>
-      <button class="icon-btn" id="inboxEdit" aria-label="Edit my identity" style="width:40px;height:40px">
-        <svg viewBox="0 0 24 24"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>
-      </button>
       <span class="spacer"></span>
-      <button class="btn ghost" id="inboxSignOut" style="padding:10px 20px;min-height:40px"><span class="btn-label">Sign out</span></button>
     </header>
     <div class="chamber-stats">
       <div class="pstat ornate"><div class="v"><svg viewBox="0 0 24 24"><rect x="2.5" y="5" width="19" height="14" rx="2.5"/><path d="m3.5 6.5 8.5 6.5 8.5-6.5"/></svg><span id="chWhispers">0</span></div><div class="l">Whispers kept</div></div>
@@ -3426,7 +3431,6 @@ $$('#inboxTabs .chip').forEach(c=>c.addEventListener('click',()=>{
   $$('#inboxTabs .chip').forEach(x=>x.classList.remove('on'));c.classList.add('on');
   inboxFilter=c.dataset.f;renderInbox();
 }));
-$('#inboxEdit').addEventListener('click',()=>openEditor());
 
 /* demo shortcut: press "m" in inbox to summon a new message */
 const demoPool=[
@@ -3720,7 +3724,6 @@ function doSignOut(){
   },{soft:true,yes:'Sign out'});
 }
 $('#railSignOut').addEventListener('click',e=>{e.stopPropagation();doSignOut()});
-$('#inboxSignOut').addEventListener('click',doSignOut);
 $('#railUser').addEventListener('keydown',e=>{if(e.key==='Enter')openProfile(null)});
 $('#railUser').addEventListener('click',()=>openProfile(null));
 $('#pfAvatar').addEventListener('click',()=>{if(!profileUser)$('#avatarFile').click()});
