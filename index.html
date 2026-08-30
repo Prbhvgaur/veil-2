@@ -890,19 +890,45 @@ body.app-mode #scr-inbox,body.app-mode #scr-discover,body.app-mode #scr-profile,
   .rail-signout-mini svg{width:16px;height:16px}
 }
 @media(max-width:900px){
-  .app-rail{top:auto;bottom:0;left:0;right:0;width:auto;height:66px;flex-direction:row;align-items:center;
-    justify-content:space-around;gap:0;padding:0 8px;border-right:none;border-top:1px solid var(--border-strong)}
-  .app-rail .rail-head,.app-rail .rail-user,.app-rail .rail-sep,.app-rail .rail-label,.app-rail .rail-badge{display:none}
-  .rail-item{width:auto;padding:12px;justify-content:center}
-  body.app-mode #scr-inbox,body.app-mode #scr-discover,body.app-mode #scr-profile,body.app-mode #scr-settings{padding-left:0;padding-bottom:80px}
-  body.app-mode .fab{bottom:84px}
+  /* bottom bezel = five primary destinations only */
+  .app-rail{top:auto;bottom:0;left:0;right:0;width:auto;height:64px;flex-direction:row;align-items:center;
+    justify-content:space-around;gap:0;padding:0 6px;border-right:none;border-top:1px solid var(--border-strong);
+    padding-bottom:env(safe-area-inset-bottom,0)}
+  .app-rail .rail-head,.app-rail .rail-user,.app-rail .rail-sep,.app-rail .rail-label,
+  .app-rail .theme-row,.app-rail #gSearchBtn,.app-rail [data-rail="notifications"],
+  .app-rail [data-rail="settings"]{display:none !important}
+  .rail-item{width:auto;padding:10px;justify-content:center;position:relative;flex-direction:column;gap:3px}
+  .rail-item .rail-badge{display:block;position:absolute;top:2px;right:2px;margin:0;padding:0 5px;font-size:9px;line-height:15px;min-width:15px;text-align:center}
+  .rail-item.on{background:none;box-shadow:none;color:var(--glow)}
+  .rail-item.on::after{content:"";position:absolute;bottom:1px;left:50%;transform:translateX(-50%);
+    width:20px;height:2px;border-radius:2px;background:var(--glow);box-shadow:0 0 8px var(--glow-mid)}
+  body.app-mode #scr-inbox,body.app-mode #scr-discover,body.app-mode #scr-profile,body.app-mode #scr-settings{padding-left:0}
+  body.app-mode .screen{padding-bottom:84px;padding-top:56px}
+  body.app-mode .fab{bottom:80px;width:52px;height:52px}
 }
+/* mobile top bar - search left, utilities right */
+.mobile-bar{display:none;position:fixed;top:0;left:0;right:0;z-index:47;height:56px;align-items:center;gap:8px;
+  padding:0 12px;background:color-mix(in srgb,var(--surface) 92%,transparent);backdrop-filter:blur(14px);
+  border-bottom:1px solid var(--border-strong)}
+@media(max-width:900px){body.app-mode .mobile-bar{display:flex}}
+.mb-search{flex:1;display:flex;align-items:center;gap:9px;min-height:38px;padding:0 14px;border-radius:99px;
+  border:1px solid var(--border-strong);background:var(--surface);color:var(--dim);font-size:13px;cursor:pointer;
+  white-space:nowrap;overflow:hidden}
+.mb-search svg{width:15px;height:15px;flex:none;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round}
+.mb-btn{width:38px;height:38px;flex:none;border-radius:50%;border:1px solid var(--border-strong);background:var(--surface);
+  color:var(--dim);display:inline-flex;align-items:center;justify-content:center;position:relative;cursor:pointer}
+.mb-btn svg{width:17px;height:17px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.mb-btn:active{transform:scale(.94)}
+.mb-btn .mb-badge{position:absolute;top:-3px;right:-3px;min-width:16px;height:16px;border-radius:99px;
+  background:var(--purple);color:#fff;font-family:var(--font-mono);font-size:9px;line-height:16px;text-align:center;
+  border:1px solid var(--bg)}
+.mb-btn .mb-badge[hidden]{display:none}
+.mb-btn.out:active{color:var(--err)}
+
+
 /* wider, broader app content */
 .inbox-wrap{max-width:1460px;padding-left:44px;padding-right:44px}
-@media(min-width:1100px){
-  #inboxList{display:grid;grid-template-columns:1fr 1fr;gap:18px;align-items:start}
-  #inboxList .inbox-msg{margin-bottom:0}
-}
+
 .inbox-head{margin-bottom:36px}
 .inbox-head .avatar{width:58px;height:58px;font-size:21px}
 .inbox-head .who h2{font-size:var(--text-2xl)}
@@ -1418,6 +1444,70 @@ html[data-theme="light"] .vcard .vreveal{background:rgba(255,255,255,.55);color:
 .invite-row code.used{color:var(--dim);text-decoration:line-through;border-style:solid}
 .invite-note{font-family:var(--font-mono);font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--dim);padding:0 18px 16px}
 
+
+/* ═══════════ WHISPER LEDGER — inbox as a list ═══════════ */
+#inboxList{display:flex;flex-direction:column;gap:0}
+.wledger{border:1px solid var(--border-strong);border-radius:var(--r-lg);overflow:hidden;background:var(--card)}
+.wrow{display:flex;align-items:center;gap:14px;width:100%;text-align:left;background:none;border:none;
+  border-bottom:1px solid var(--border);padding:14px 18px;cursor:pointer;color:inherit;position:relative;
+  transition:background .18s}
+.wrow:last-of-type{border-bottom:none}
+.wrow:hover{background:color-mix(in srgb,var(--glow-soft) 40%,transparent)}
+.wrow .wseal{width:42px;height:42px;flex:none;border-radius:14px;position:relative;display:flex;
+  align-items:center;justify-content:center;border:1px solid var(--border-strong);overflow:hidden}
+.wrow .wseal svg{width:20px;height:20px;stroke:#fff;fill:none;stroke-width:1.4;stroke-linecap:round;stroke-linejoin:round;opacity:.92}
+.wrow .wmain{flex:1;min-width:0}
+.wrow .wtop{display:flex;align-items:baseline;gap:9px}
+.wrow .walias{font-size:14px;font-weight:650;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.wrow .wtime{margin-left:auto;font-family:var(--font-mono);font-size:10.5px;letter-spacing:.08em;color:var(--dim);flex:none}
+.wrow .wprev{font-size:var(--text-sm);color:var(--dim);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:2px}
+.wrow.unread .walias{color:var(--glow)}
+.wrow.unread .wprev{color:var(--text)}
+.wrow .wdot{width:8px;height:8px;border-radius:50%;flex:none;background:var(--glow);box-shadow:0 0 9px var(--glow-mid)}
+.wrow .wchev{width:15px;height:15px;flex:none;stroke:var(--dim);fill:none;stroke-width:2;stroke-linecap:round;
+  stroke-linejoin:round;transition:transform .3s var(--spring)}
+.wrow.open .wchev{transform:rotate(180deg);stroke:var(--glow)}
+.wbody{max-height:0;overflow:hidden;transition:max-height .4s var(--ease);border-bottom:1px solid var(--border);background:var(--surface)}
+.wbody.open{max-height:340px}
+.wbody .winner{padding:18px 22px 16px 74px}
+@media(max-width:680px){.wbody .winner{padding:16px 18px}}
+.wbody .wfull{font-size:var(--msg-size);line-height:1.55;font-weight:500;color:var(--text)}
+.wbody .wacts{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px;align-items:center}
+.wbody .wspace{flex:1}
+body.compact .wrow{padding:10px 16px}
+body.compact .wbody .winner{padding:14px 18px 12px 70px}
+
+/* ═══════════ MOBILE APP BAR (top) ═══════════ */
+.mobile-top{display:none;position:sticky;top:0;z-index:44;align-items:center;gap:6px;padding:10px 14px;
+  background:color-mix(in srgb,var(--bg) 88%,transparent);backdrop-filter:blur(14px);
+  border-bottom:1px solid var(--border)}
+.mobile-top .mt-brand{font-family:var(--font-display);font-style:italic;font-size:22px;color:var(--glow);
+  text-shadow:0 0 10px var(--glow-mid);background:none;border:none;padding:0;margin-right:auto;cursor:pointer}
+.mobile-top .mt-btn{width:40px;height:40px;border-radius:12px;border:1px solid var(--border-strong);
+  background:var(--card);color:var(--dim);display:inline-flex;align-items:center;justify-content:center;
+  position:relative;cursor:pointer;transition:color .2s,border-color .2s}
+.mobile-top .mt-btn:hover,.mobile-top .mt-btn.on{color:var(--glow);border-color:var(--glow)}
+.mobile-top .mt-btn svg{width:18px;height:18px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.mobile-top .mt-badge{position:absolute;top:-5px;right:-5px;min-width:17px;height:17px;border-radius:99px;
+  background:var(--purple);border:1px solid var(--glow);color:#fff;font-family:var(--font-mono);font-size:9px;
+  display:flex;align-items:center;justify-content:center;padding:0 4px}
+
+@media(max-width:900px){
+  body.app-mode .mobile-top{display:flex}
+  /* bottom bezel: five primary destinations only */
+  .app-rail .rail-item[data-rail="connections"] .rail-badge,
+  .app-rail .rail-item[data-rail="notifications"]{display:none}
+  .app-rail #gSearchBtn,.app-rail .theme-row,.app-rail .rail-user{display:none !important}
+  .app-rail .rail-item[data-rail="settings"]{display:none}
+  .app-rail{height:64px;padding:0 4px}
+  .rail-item{flex:1;padding:10px 0}
+  .app-rail .rail-item[data-rail="connections"]{position:relative}
+  body.app-mode #scr-inbox,body.app-mode #scr-kindred,body.app-mode #scr-discover,
+  body.app-mode #scr-connections,body.app-mode #scr-notifications,
+  body.app-mode #scr-profile,body.app-mode #scr-settings{padding-bottom:84px}
+  body.app-mode .fab{bottom:80px;right:18px;width:52px;height:52px}
+}
+
 /* ═══════════ MOBILE FORMAT FIXES (must stay last — wins all cascades) ═══════════ */
 @media(max-width:860px){
   .settings-shell{grid-template-columns:1fr;gap:14px;padding-left:16px;padding-right:16px;padding-top:16px}
@@ -1455,6 +1545,16 @@ html[data-theme="light"] .vcard .vreveal{background:rgba(255,255,255,.55);color:
   .editor-card{padding:28px 20px}
   .quiz-card{padding:28px 16px}
   .auth-card{padding:32px 18px}
+  .wrow{padding:11px 13px;gap:11px}
+  .wseal{width:40px;height:40px}
+  .walias{font-size:13.5px}
+  .wprev{font-size:12.5px}
+  .inbox-plaque-row{margin-bottom:14px}
+  .chamber-stats{grid-template-columns:repeat(3,1fr);gap:8px}
+  .chamber-stats .pstat{padding:10px 6px}
+  .chamber-stats .pstat .v{font-size:20px;gap:5px}
+  .chamber-stats .pstat .v svg{width:15px;height:15px}
+  .chamber-stats .pstat .l{font-size:8.5px;letter-spacing:.14em}
 }
 </style>
 </head>
@@ -1516,6 +1616,39 @@ html[data-theme="light"] .vcard .vreveal{background:rgba(255,255,255,.55);color:
   </div>
 </aside>
 
+<header class="mobile-top" id="mobileTop" aria-label="App bar">
+  <button class="mt-brand" data-go="landing" aria-label="Veil home">Veil</button>
+  <button class="mt-btn" id="mtSearch" aria-label="Search">
+    <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+  </button>
+  <button class="mt-btn" data-go="notifications" aria-label="Notifications">
+    <svg viewBox="0 0 24 24"><path d="M18 9a6 6 0 1 0-12 0c0 6-2.5 7-2.5 7h17S18 15 18 9Z"/><path d="M10 20a2.2 2.2 0 0 0 4 0"/></svg>
+    <span class="mt-badge" id="mtNotifBadge" hidden>0</span>
+  </button>
+  <button class="mt-btn" data-go="settings" aria-label="Settings">
+    <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.9l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.9-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.2a1.7 1.7 0 0 0-1-1.5 1.7 1.7 0 0 0-1.9.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.9 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.2a1.7 1.7 0 0 0 1.5-1 1.7 1.7 0 0 0-.3-1.9l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.9.3h.1a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.2a1.7 1.7 0 0 0 1 1.5h.1a1.7 1.7 0 0 0 1.9-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.9v.1a1.7 1.7 0 0 0 1.5 1h.2a2 2 0 1 1 0 4h-.2a1.7 1.7 0 0 0-1.5 1Z"/></svg>
+  </button>
+</header>
+
+<div class="mobile-bar" id="mobileBar" aria-label="Quick actions">
+  <button class="mb-search" id="mbSearch" aria-label="Search the Veil">
+    <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>Search veils and whispers
+  </button>
+  <button class="mb-btn" id="mbNotif" aria-label="Notifications">
+    <svg viewBox="0 0 24 24"><path d="M18 9a6 6 0 1 0-12 0c0 6-2.5 7-2.5 7h17S18 15 18 9Z"/><path d="M10 20a2.2 2.2 0 0 0 4 0"/></svg>
+    <span class="mb-badge" id="mbNotifCount" hidden>0</span>
+  </button>
+  <button class="mb-btn" id="mbSettings" aria-label="Settings">
+    <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.9l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.9-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.2a1.7 1.7 0 0 0-1-1.5 1.7 1.7 0 0 0-1.9.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.9 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.2a1.7 1.7 0 0 0 1.5-1 1.7 1.7 0 0 0-.3-1.9l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.9.3h.1a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.2a1.7 1.7 0 0 0 1 1.5h.1a1.7 1.7 0 0 0 1.9-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.9v.1a1.7 1.7 0 0 0 1.5 1h.2a2 2 0 1 1 0 4h-.2a1.7 1.7 0 0 0-1.5 1Z"/></svg>
+  </button>
+  <button class="mb-btn" id="mbTheme" aria-label="Toggle theme" data-theme-toggle>
+    <svg class="theme-ico ico-moon" viewBox="0 0 24 24"><path d="M21 12.8A9 9 0 1 1 11.2 3 7 7 0 0 0 21 12.8Z"/></svg>
+    <svg class="theme-ico ico-sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v2m0 16v2M4.9 4.9l1.4 1.4m11.4 11.4 1.4 1.4M2 12h2m16 0h2M4.9 19.1l1.4-1.4m11.4-11.4 1.4-1.4"/></svg>
+  </button>
+  <button class="mb-btn out" id="mbSignOut" aria-label="Sign out">
+    <svg viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><path d="m16 17 5-5-5-5M21 12H9"/></svg>
+  </button>
+</div>
 <button class="fab" id="fabCopy" aria-label="Copy my Veil link">
   <svg viewBox="0 0 24 24"><path d="M10 13a5 5 0 0 0 7.5.5l3-3a5 5 0 0 0-7-7l-1.7 1.7"/><path d="M14 11a5 5 0 0 0-7.5-.5l-3 3a5 5 0 0 0 7 7l1.7-1.7"/></svg>
 </button>
@@ -2477,6 +2610,9 @@ html[data-theme="light"] .vcard .vreveal{background:rgba(255,255,255,.55);color:
         <div class="row"><span class="rico"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg></span>
           <div class="rmain"><div class="rlabel">Connected apps</div><div class="rdesc">Instagram story sharing, TikTok link</div></div>
           <div class="rctrl"><span class="badge">2</span><button class="chevbtn" aria-label="Manage connected apps" onclick="toast('Connected apps — coming soon')"><svg viewBox="0 0 24 24"><path d="m9 6 6 6-6 6"/></svg></button></div></div>
+        <div class="row"><span class="rico"><svg viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><path d="m16 17 5-5-5-5M21 12H9"/></svg></span>
+          <div class="rmain"><div class="rlabel">Sign out</div><div class="rdesc">Close the veil behind you</div></div>
+          <div class="rctrl"><button class="linklike" id="pfSignOut">Sign out</button></div></div>
       </div>
       <div class="pf-settings group ornate" id="pfInvites">
         <div class="row" style="border-bottom:1px solid var(--border-strong)">
@@ -3348,7 +3484,7 @@ function typewrite(el,text){
   clearInterval(typeIv);el.textContent='';let i=0;
   typeIv=setInterval(()=>{el.textContent=text.slice(0,++i);if(i>=text.length)clearInterval(typeIv)},46);
 }
-let inboxFilter='all';
+let inboxFilter='all',openWhisper=null;
 const maskIco='<svg viewBox="0 0 24 24"><path d="M12 3C8 3 5.5 5 5.5 9c0 5 2.7 9 6.5 11.5C15.8 18 18.5 14 18.5 9c0-4-2.5-6-6.5-6Z"/><path d="M8.8 9.6q1.5-1.4 3 0m.4 0q1.5-1.4 3 0" opacity=".8"/></svg>';
 function visibleMsgs(){
   return state.messages.filter(m=>
@@ -3382,50 +3518,68 @@ function renderInbox(withSkeleton=false){
     list.innerHTML=`<p class="mini-empty">${inboxFilter==='unread'?'All whispers have been read. The chamber rests.':inboxFilter==='archived'?'The archive lies empty, for now.':'Silence. Share your link and summon the first whisper.'}</p>`;
     return;
   }
-  list.innerHTML=msgs.map((m,i)=>`
-    <article class="inbox-msg ornate ${m.unread?'unread':''}" data-id="${m.id}" style="animation-delay:${i*0.07}s" ${m.unread?'title="Tap to mark as read"':''}>
-      ${m.unread?'<span class="new-tag">New</span>':''}
-      <p class="mtxt">“${m.text}”</p>
-      <div class="mfoot">
-        <span class="mfrom">${maskIco}${m.alias||'a masked stranger'}</span>
-        <span class="mtime">· ${m.time}</span>
-        <span class="mspace"></span>
-        ${['heart','fire','mind'].map(k=>`
-          <button class="react ${m.mine===k?'on':''}" data-react="${k}" aria-label="React ${k}" aria-pressed="${m.mine===k}">
-            ${reactIcons[k]}<span class="rc">${m.reacts[k]||''}</span>
-          </button>`).join('')}
-        <button class="react iconic" data-arch aria-label="${m.archived?'Restore from archive':'Archive message'}" title="${m.archived?'Restore':'Archive'}">
-          ${m.archived
-            ?'<svg viewBox="0 0 24 24"><path d="M3 8V6a1 1 0 0 1 1-1h16a1 1 0 0 1 1 1v2"/><path d="M4 8h16v11a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1Z"/><path d="m12 16 0-5m0 0-2.5 2.5M12 11l2.5 2.5"/></svg>'
-            :'<svg viewBox="0 0 24 24"><path d="M3 8V6a1 1 0 0 1 1-1h16a1 1 0 0 1 1 1v2"/><path d="M4 8h16v11a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1Z"/><path d="M10 12h4"/></svg>'}
-        </button>
-        <button class="react iconic report" data-report aria-label="Report message" title="Report">
-          <svg viewBox="0 0 24 24"><path d="M5 21V4h13l-2.5 4L18 12H5"/></svg>
-        </button>
+  const rows=msgs.map((m,i)=>{
+    const h=hashStr(m.alias||'stranger');
+    const hue=h%360;
+    const open=openWhisper===m.id;
+    return `
+    <button class="wrow ${m.unread?'unread':''} ${open?'open':''}" data-id="${m.id}" style="animation-delay:${i*0.05}s" aria-expanded="${open}">
+      <span class="wseal" style="background:linear-gradient(140deg,hsl(${hue} 45% 34%),hsl(${(hue+50)%360} 50% 16%))" aria-hidden="true">${maskIco}</span>
+      <span class="wmain">
+        <span class="wtop"><span class="walias">${m.alias||'a masked stranger'}</span>
+          <span class="wtime">${m.time}</span></span>
+        <span class="wprev">${m.text}</span>
+      </span>
+      ${m.unread?'<span class="wdot" aria-label="Unread"></span>':''}
+      <svg class="wchev" viewBox="0 0 24 24"><path d="m6 9 6 6 6-6"/></svg>
+    </button>
+    <div class="wbody ${open?'open':''}" data-body="${m.id}">
+      <div class="winner">
+        <p class="wfull">“${m.text}”</p>
+        <div class="wacts">
+          ${['heart','fire','mind'].map(k=>`
+            <button class="react ${m.mine===k?'on':''}" data-react="${k}" data-id="${m.id}" aria-label="React ${k}" aria-pressed="${m.mine===k}">
+              ${reactIcons[k]}<span class="rc">${m.reacts[k]||''}</span>
+            </button>`).join('')}
+          <span class="wspace"></span>
+          <button class="react iconic" data-arch data-id="${m.id}" aria-label="${m.archived?'Restore from archive':'Archive message'}" title="${m.archived?'Restore':'Archive'}">
+            ${m.archived
+              ?'<svg viewBox="0 0 24 24"><path d="M3 8V6a1 1 0 0 1 1-1h16a1 1 0 0 1 1 1v2"/><path d="M4 8h16v11a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1Z"/><path d="m12 16 0-5m0 0-2.5 2.5M12 11l2.5 2.5"/></svg>'
+              :'<svg viewBox="0 0 24 24"><path d="M3 8V6a1 1 0 0 1 1-1h16a1 1 0 0 1 1 1v2"/><path d="M4 8h16v11a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1Z"/><path d="M10 12h4"/></svg>'}
+          </button>
+          <button class="react iconic report" data-report data-id="${m.id}" aria-label="Report message" title="Report">
+            <svg viewBox="0 0 24 24"><path d="M5 21V4h13l-2.5 4L18 12H5"/></svg>
+          </button>
+        </div>
       </div>
-    </article>`).join('');
+    </div>`}).join('');
+  list.innerHTML=`<div class="wledger">${rows}</div>`;
 }
 $('#inboxList').addEventListener('click',e=>{
-  const card=e.target.closest('.inbox-msg');if(!card)return;
-  const m=state.messages.find(x=>x.id==card.dataset.id);
-  const rb=e.target.closest('[data-react]');
-  if(rb){
-    const k=rb.dataset.react;
-    if(m.mine===k){m.reacts[k]--;m.mine=null}
-    else{if(m.mine)m.reacts[m.mine]--;m.mine=k;m.reacts[k]=(m.reacts[k]||0)+1}
-    m.unread=false;saveMsgs();renderInbox();return;
-  }
-  if(e.target.closest('[data-arch]')){
-    m.archived=!m.archived;m.unread=false;saveMsgs();renderInbox();
-    toast(m.archived?'Sealed in the archive':'Restored to the chamber');return;
-  }
-  if(e.target.closest('[data-report]')){
+  const btn=e.target.closest('[data-react],[data-arch],[data-report]');
+  if(btn){
+    const m=state.messages.find(x=>x.id==btn.dataset.id);if(!m)return;
+    if(btn.hasAttribute('data-react')){
+      const k=btn.dataset.react;
+      if(m.mine===k){m.reacts[k]--;m.mine=null}
+      else{if(m.mine)m.reacts[m.mine]--;m.mine=k;m.reacts[k]=(m.reacts[k]||0)+1}
+      m.unread=false;saveMsgs();renderInbox();return;
+    }
+    if(btn.hasAttribute('data-arch')){
+      m.archived=!m.archived;m.unread=false;openWhisper=null;saveMsgs();renderInbox();
+      toast(m.archived?'Sealed in the archive':'Restored to the chamber');return;
+    }
     confirmDialog('Report this whisper?','Our keepers will review it. The sender will not know.',()=>{
-      state.messages=state.messages.filter(x=>x.id!==m.id);saveMsgs();renderInbox();
+      state.messages=state.messages.filter(x=>x.id!==m.id);openWhisper=null;saveMsgs();renderInbox();
       toast('Reported. The whisper is sealed away.');
-    });return;
+    });
+    return;
   }
-  if(m.unread){m.unread=false;saveMsgs();renderInbox()}
+  const row=e.target.closest('.wrow');if(!row)return;
+  const m=state.messages.find(x=>x.id==row.dataset.id);if(!m)return;
+  openWhisper=openWhisper===m.id?null:m.id;
+  if(m.unread){m.unread=false;saveMsgs()}
+  renderInbox();
 });
 $$('#inboxTabs .chip').forEach(c=>c.addEventListener('click',()=>{
   $$('#inboxTabs .chip').forEach(x=>x.classList.remove('on'));c.classList.add('on');
@@ -3724,6 +3878,7 @@ function doSignOut(){
   },{soft:true,yes:'Sign out'});
 }
 $('#railSignOut').addEventListener('click',e=>{e.stopPropagation();doSignOut()});
+$('#pfSignOut').addEventListener('click',doSignOut);
 $('#railUser').addEventListener('keydown',e=>{if(e.key==='Enter')openProfile(null)});
 $('#railUser').addEventListener('click',()=>openProfile(null));
 $('#pfAvatar').addEventListener('click',()=>{if(!profileUser)$('#avatarFile').click()});
@@ -4157,6 +4312,10 @@ function renderNotifs(){
   const unread=n.filter(x=>x.unread).length;
   $('#notifCount').textContent=unread;
   $('#notifCount').style.display=unread?'':'none';
+  const mbb=$('#mbNotifCount');
+  if(mbb){mbb.textContent=unread;mbb.hidden=!unread}
+  const mtb=$('#mtNotifBadge');
+  if(mtb){mtb.textContent=unread;mtb.hidden=!unread}
   $('#notifList').innerHTML=n.map(x=>`
     <div class="notif-row ${x.unread?'unread':''}" data-nid="${x.id}">
       <span class="nico" aria-hidden="true">${NOTIF_ICONS[x.kind]||NOTIF_ICONS.system}</span>
@@ -4205,6 +4364,12 @@ $('#inviteGrid').addEventListener('click',e=>{
 renderConnections();renderNotifs();renderInvites();
 
 /* ═══════════ COLLAPSIBLE RAIL ═══════════ */
+/* mobile top bar */
+$('#mbSearch').addEventListener('click',openSearch);
+$('#mbNotif').addEventListener('click',()=>go('notifications'));
+$('#mbSettings').addEventListener('click',()=>go('settings'));
+$('#mbSignOut').addEventListener('click',doSignOut);
+
 $('#railToggle').addEventListener('click',()=>{
   const min=document.body.classList.toggle('rail-min');
   store.set('railMin',min);
@@ -4233,6 +4398,7 @@ function openSearch(){
   setTimeout(()=>$('#gsInput').focus(),120);
 }
 $('#gSearchBtn').addEventListener('click',openSearch);
+$('#mtSearch').addEventListener('click',openSearch);
 $('#gsInput').addEventListener('input',gsRender);
 $('#gsOverlay').addEventListener('click',e=>{
   if(e.target.id==='gsOverlay'){e.target.classList.remove('open');return}
