@@ -163,11 +163,6 @@ textarea.input{resize:vertical;min-height:84px}
 .screen.leaving{animation:screenOut .16s ease-in forwards}
 @keyframes screenIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
 @keyframes screenOut{to{opacity:0}}
-.veil-sweep{position:fixed;inset:0;z-index:90;pointer-events:none;transform:translateX(-102%);
-  background:linear-gradient(100deg,transparent,var(--purple) 30%,#160E24 50%,var(--purple) 70%,transparent);
-  opacity:.96;filter:blur(2px)}
-.veil-sweep.run{animation:sweep .62s cubic-bezier(.7,0,.3,1) forwards}
-@keyframes sweep{from{transform:translateX(-102%)}to{transform:translateX(102%)}}
 
 .container{max-width:1440px;margin:0 auto;padding:0 44px}
 @media(max-width:760px){.container{padding:0 20px}}
@@ -1563,7 +1558,6 @@ body.compact .wbody .winner{padding:14px 18px 12px 70px}
 <div class="grain" aria-hidden="true"></div>
 <div class="vignette" aria-hidden="true"></div>
 <canvas id="fxCanvas" aria-hidden="true"></canvas>
-<div class="veil-sweep" id="veilSweep" aria-hidden="true"></div>
 
 <aside class="app-rail" id="appRail" aria-label="App navigation">
   <div class="rail-head">
@@ -3000,7 +2994,6 @@ function withLoading(btn,ms,fn){
 
 /* ═══════════ ROUTER ═══════════ */
 let current='landing';
-$('#veilSweep').addEventListener('animationend',e=>e.target.classList.remove('run'));
 const APP_LOCKED=['inbox','kindred','discover','connections','notifications','profile','settings'];
 if(store.get('archetype',null)&&store.get('authed',null)===null)store.set('authed',true);
 function go(name,opts={}){
@@ -3026,7 +3019,7 @@ function go(name,opts={}){
       }
     }
     if(name==='inbox')renderInbox(true);
-  },260);
+  },170);
 }
 document.addEventListener('click',e=>{
   const g=e.target.closest('[data-go]');
@@ -3363,6 +3356,7 @@ $('#avatarFile').addEventListener('change',e=>{
     im.src=r.result;
   };
   r.readAsDataURL(f);
+  e.target.value='';
 });
 const savedAvatar=store.get('avatar',null);
 if(savedAvatar)setAvatarAll(savedAvatar);
@@ -3449,6 +3443,32 @@ $$('.overlay').forEach(o=>o.addEventListener('click',e=>{if(e.target===o)o.class
 document.addEventListener('keydown',e=>{
   if(e.key==='Escape'){$$('.overlay.open').forEach(o=>o.classList.remove('open'));$('#blockedPanel').classList.remove('open')}
 });
+
+/* ═══════════ DIALOG FOCUS TRAP ═══════════ */
+(function(){
+  const FOCUSABLE='button,[href],input,select,textarea,[tabindex]:not([tabindex="-1"])';
+  let lastFocused=null;
+  document.addEventListener('keydown',e=>{
+    if(e.key!=='Tab')return;
+    const open=$('.overlay.open');if(!open)return;
+    const items=[...open.querySelectorAll(FOCUSABLE)].filter(el=>!el.disabled&&el.offsetParent!==null);
+    if(!items.length)return;
+    const first=items[0],last=items[items.length-1];
+    if(e.shiftKey&&document.activeElement===first){e.preventDefault();last.focus()}
+    else if(!e.shiftKey&&document.activeElement===last){e.preventDefault();first.focus()}
+    else if(!open.contains(document.activeElement)){e.preventDefault();first.focus()}
+  });
+  new MutationObserver(muts=>muts.forEach(m=>{
+    const el=m.target;
+    if(!el.classList||!el.classList.contains('overlay'))return;
+    if(el.classList.contains('open')){
+      lastFocused=document.activeElement;
+      const f=el.querySelector(FOCUSABLE);if(f)setTimeout(()=>f.focus(),90);
+    }else if(lastFocused&&document.contains(lastFocused)){
+      lastFocused.focus();lastFocused=null;
+    }
+  })).observe(document.body,{subtree:true,attributes:true,attributeFilter:['class']});
+})();
 
 /* ═══════════ IDENTITY SYNC ═══════════ */
 function syncIdentity(){
@@ -4035,7 +4055,7 @@ renderReading();
   let colorTick=0;
   function tick(){
     requestAnimationFrame(tick);
-    if(document.hidden||rootEl.dataset.motion==='reduced'){ctx.clearRect(0,0,W,H);return}
+    if(document.hidden||rootEl.dataset.motion==='reduced'||document.body.classList.contains('app-mode')){ctx.clearRect(0,0,W,H);return}
     if(!(colorTick++%40))ember=getComputedStyle(rootEl).getPropertyValue('--acc-glow').trim()||ember;
     ctx.clearRect(0,0,W,H);
     ctx.globalCompositeOperation='lighter';
@@ -4405,7 +4425,20 @@ $('#gsOverlay').addEventListener('click',e=>{
   const v=e.target.closest('[data-gsv]');
   if(v){$('#gsOverlay').classList.remove('open');openProfile(USERS.find(u=>u.handle===v.dataset.gsv));return}
   const m=e.target.closest('[data-gsm]');
-  if(m){$('#gsOverlay').classList.remove('open');go('inbox')}
+  if(m){
+    $('#gsOverlay').classList.remove('open');
+    const id=+m.dataset.gsm;
+    const msg=state.messages.find(x=>x.id===id);
+    if(msg){inboxFilter='all';$$('#inboxTabs .chip').forEach(c=>c.classList.toggle('on',c.dataset.f==='all'));
+      openWhisper=id;if(msg.unread){msg.unread=false;saveMsgs()}}
+    if(current==='inbox')renderInbox();else go('inbox');
+    const reveal=()=>{
+      const row=document.querySelector(`.wrow[data-id="${id}"]`);
+      if(row){row.scrollIntoView({block:'center',behavior:'smooth'});return true}
+      return false;
+    };
+    setTimeout(()=>{if(!reveal())setTimeout(reveal,700)},260);
+  }
 });
 
 /* ═══════════ COVER & PICTURE UPLOADS ═══════════ */
