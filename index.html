@@ -8,7 +8,13 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=DM+Sans:opsz,wght@9..40,300..700&family=JetBrains+Mono:wght@400;500;600&family=Bebas+Neue&display=swap" rel="stylesheet">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cpath d='M4 8 Q16 2 28 8 Q27 20 16 29 Q5 20 4 8Z' fill='none' stroke='%23FF4D6E' stroke-width='2'/%3E%3Ccircle cx='16' cy='15.5' r='3' fill='%23FF4D6E'/%3E%3C/svg%3E">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/0.160.0/three.min.js" defer></script>
+<script type="module">
+  // three's classic build/three.min.js is deprecated from r150 and removed in r160,
+  // so the séance loads the ES module build and hands it to the inline script.
+  import(/* webpackIgnore: true */ 'https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js')
+    .then((THREE) => { window.THREE = THREE; window.dispatchEvent(new Event('three:ready')) })
+    .catch(() => window.dispatchEvent(new Event('three:failed')));
+</script>
 <style>
 /* ═══════════ TOKENS ═══════════ */
 :root{
@@ -859,7 +865,8 @@ body.app-mode #scr-inbox,body.app-mode #scr-discover,body.app-mode #scr-profile,
 .rail-sep{height:1px;background:var(--border-strong);margin:14px 8px}
 .rail-ticon{position:relative;width:19px;height:19px;flex:none;display:inline-flex;align-items:center;justify-content:center}
 .rail-ticon svg{position:absolute;inset:0}
-.rail-user{margin-top:auto;display:flex;gap:12px;align-items:center;width:100%;text-align:left;padding:12px;
+.rail-me{display:flex;gap:12px;align-items:center;flex:1;min-width:0;background:none;border:none;color:inherit;text-align:left;padding:0;cursor:pointer}
+.rail-user{margin-top:auto;display:flex;gap:10px;align-items:center;width:100%;text-align:left;padding:12px;
   border:1px solid var(--border-strong);border-radius:var(--r-md);background:var(--card);color:inherit;cursor:pointer;
   transition:border-color .2s,box-shadow .25s,transform .18s var(--spring)}
 .rail-user:hover{border-color:var(--glow);box-shadow:0 0 18px var(--glow-soft)}
@@ -1334,7 +1341,13 @@ body.app-mode #scr-kindred,body.app-mode #scr-connections,body.app-mode #scr-not
 .pf-pic svg{width:22px;height:22px;stroke:currentColor;fill:none;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
 .pf-pic span{font-family:var(--font-mono);font-size:9px;letter-spacing:.2em;text-transform:uppercase}
 .pf-pic img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
-.pf-pic .rmpic{position:absolute;top:6px;right:6px;width:26px;height:26px;border-radius:50%;border:none;
+.pf-pic-hit{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;
+  gap:7px;background:none;border:none;color:inherit;cursor:pointer;font:inherit;z-index:1}
+.pf-pic-hit span{font-family:var(--font-mono);font-size:9px;letter-spacing:.2em;text-transform:uppercase}
+.pf-pic-hit svg{width:22px;height:22px;stroke:currentColor;fill:none;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
+.vname{background:none;border:none;padding:0;font:inherit;color:inherit;cursor:pointer;text-align:left}
+.vname:hover{color:var(--glow)}
+.pf-pic .rmpic{position:absolute;top:6px;right:6px;width:26px;height:26px;border-radius:50%;border:none;z-index:2;
   background:rgba(0,0,0,.55);color:#fff;font-size:14px;line-height:1;display:none;align-items:center;justify-content:center;z-index:2}
 .pf-pic:hover .rmpic{display:flex}
 .pf-edit-corner{position:absolute;top:18px;right:18px;z-index:5}
@@ -1601,9 +1614,11 @@ body.compact .wbody .winner{padding:14px 18px 12px 70px}
       <span class="tsw-thumb"></span>
     </span><span class="rail-label">Theme</span>
   </button>
-  <div class="rail-user" id="railUser" role="button" tabindex="0" aria-label="Open my profile">
-    <span class="avatar" aria-hidden="true"><span id="railInitials">SR</span><img id="railImg" alt="" hidden></span>
-    <span class="rail-uinfo"><b id="railName">Saurabh Rakheja</b><span id="railHandle">veil.app/saurabh</span></span>
+  <div class="rail-user" id="railUser">
+    <button class="rail-me" id="railMe" aria-label="Open my profile">
+      <span class="avatar" aria-hidden="true"><span id="railInitials">SR</span><img id="railImg" alt="" hidden></span>
+      <span class="rail-uinfo"><b id="railName">Saurabh Rakheja</b><span id="railHandle">veil.app/saurabh</span></span>
+    </button>
     <button class="rail-signout-mini" id="railSignOut" aria-label="Sign out" title="Sign out">
       <svg viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><path d="m16 17 5-5-5-5M21 12H9"/></svg>
     </button>
@@ -2622,7 +2637,7 @@ body.compact .wbody .winner{padding:14px 18px 12px 70px}
     <div class="composer ornate" id="pfComposer" hidden>
       <h3>Whisper to <span id="pfComposerName" style="color:var(--glow)">them</span></h3>
       <p class="sub">Anonymous. Untraceable. Be brave — and be kind.</p>
-      <textarea class="input" id="pfComposerText" maxlength="280" placeholder="Say what you mean…"></textarea>
+      <textarea class="input" id="pfComposerText" maxlength="280" placeholder="Say what you mean…" aria-label="Your anonymous whisper"></textarea>
       <div class="c-foot">
         <span class="c-count"><span id="pfComposerCount">0</span>/280</span>
         <button class="btn primary" id="pfSend"><span class="spinner" aria-hidden="true"></span><span class="btn-label">Send into the dark</span></button>
@@ -3762,12 +3777,12 @@ function renderVeils(){
       ?'<button class="vconnect sent" data-noop="1"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg>Requested</button>'
       :`<button class="vconnect" data-connect="${u.handle}"><svg viewBox="0 0 24 24"><path d="M10 13a5 5 0 0 0 7.5.5l3-3a5 5 0 0 0-7-7l-1.7 1.7"/><path d="M14 11a5 5 0 0 0-7.5-.5l-3 3a5 5 0 0 0 7 7l1.7-1.7"/></svg>Request connection</button>`;
     return `
-    <article class="vcard" data-h="${u.handle}" role="button" tabindex="0" aria-label="Visit ${u.handle}">
+    <article class="vcard" data-h="${u.handle}">
       <div class="vcover" style="background-color:hsl(${u.hue} 42% 21%)"></div>
       <button class="avatar" style="background:${avatarBg(u.hue)}" data-peek="${u.handle}" aria-label="Expand ${u.name}'s picture">${initials(u.name)}</button>
       <span class="vreveal">face revealed when connected</span>
       <div class="vinner">
-        <div class="vrow"><h3>${u.name}</h3><span class="vpub"><i></i>Public</span></div>
+        <div class="vrow"><h3><button class="vname" data-visit="${u.handle}">${u.name}</button></h3><span class="vpub"><i></i>Public</span></div>
         <p class="vcity">${u.city} · @${u.handle} · ${archName(u.arch)}</p>
         <span class="vbadge ${u.verified?'ok':'dim'}">${u.verified
           ?'<svg viewBox="0 0 24 24"><path d="m5 13 4 4L19 7"/></svg>Verified'
@@ -3879,8 +3894,10 @@ function renderPfPics(me){
   const addIco='<svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>';
   const maskIco2='<svg viewBox="0 0 24 24"><path d="M12 3C8 3 5.5 5 5.5 9c0 5 2.7 9 6.5 11.5C15.8 18 18.5 14 18.5 9c0-4-2.5-6-6.5-6Z"/></svg>';
   $('#pfPics').innerHTML=pics.map((p,i)=>me
-    ?(p?`<button class="pf-pic" data-pic="${i}" style="border-style:solid" aria-label="Picture ${i+1}"><img src="${p}" alt="Picture ${i+1}"><span class="rmpic" data-rmpic="${i}" role="button" aria-label="Remove picture ${i+1}">×</span></button>`
-       :`<button class="pf-pic" data-pic="${i}" aria-label="Add picture ${i+1}">${addIco}<span>Add picture</span></button>`)
+    ?(p?`<div class="pf-pic" style="border-style:solid"><img src="${p}" alt="Picture ${i+1}">
+        <button class="pf-pic-hit" data-pic="${i}" aria-label="Replace picture ${i+1}"></button>
+        <button class="rmpic" data-rmpic="${i}" aria-label="Remove picture ${i+1}">×</button></div>`
+       :`<div class="pf-pic"><button class="pf-pic-hit" data-pic="${i}" aria-label="Add picture ${i+1}">${addIco}<span>Add picture</span></button></div>`)
     :`<div class="pf-pic" style="cursor:default">${maskIco2}<span>Kept veiled</span></div>`
   ).join('');
 }
@@ -3899,8 +3916,8 @@ function doSignOut(){
 }
 $('#railSignOut').addEventListener('click',e=>{e.stopPropagation();doSignOut()});
 $('#pfSignOut').addEventListener('click',doSignOut);
-$('#railUser').addEventListener('keydown',e=>{if(e.key==='Enter')openProfile(null)});
-$('#railUser').addEventListener('click',()=>openProfile(null));
+$('#railMe').addEventListener('click',()=>openProfile(null));
+
 $('#pfAvatar').addEventListener('click',()=>{if(!profileUser)$('#avatarFile').click()});
 /* ═══════════ CUSTOMIZE-MY-VEIL EDITOR ═══════════ */
 function openEditor(){
@@ -4126,7 +4143,7 @@ renderReading();
 })();
 
 /* ═══════════ THE SÉANCE — WebGL living veil (Three.js) ═══════════ */
-addEventListener('load',function(){
+function initSeance(){
   const wrap=$('#seanceWrap');if(!wrap)return;
   if(typeof THREE==='undefined'){$('#seanceFallback').hidden=false;return}
   const canvas=$('#webglVeil');
@@ -4183,7 +4200,16 @@ addEventListener('load',function(){
     cam.lookAt(0,0,0);
     renderer.render(scene,cam);
   });
-});
+}
+/* run as soon as the module lands; if it never does, show the fallback line */
+if(typeof THREE!=='undefined')initSeance();
+else{
+  let settled=false;
+  const start=()=>{if(!settled){settled=true;initSeance()}};
+  addEventListener('three:ready',start,{once:true});
+  addEventListener('three:failed',()=>{if(!settled){settled=true;const f=$('#seanceFallback');if(f)f.hidden=false}},{once:true});
+  setTimeout(()=>{if(!settled){settled=true;initSeance()}},6000);
+}
 
 /* ═══════════ KINDRED DECK — swipe your vibe ═══════════ */
 let deckPool=[],deckIdx=0;
